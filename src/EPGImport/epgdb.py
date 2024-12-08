@@ -113,9 +113,9 @@ class epgdb_class:
 		if self.connection is None:
 			print("[EPGDB] not connected, retrying")
 			self.start_process()
-		# if services is None:
-			# # reset event container
-			# self.events=[]
+		if services is None:
+			# reset event container
+			self.events=[]
 		# one local cursor per table seems to perform slightly better ...
 		cursor_service = self.connection.cursor()
 		cursor_event = self.connection.cursor()

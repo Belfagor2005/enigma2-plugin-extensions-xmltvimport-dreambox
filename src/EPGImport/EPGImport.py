@@ -37,14 +37,35 @@ else:
 from datetime import datetime
 
 # Used to check server validity
-HDD_EPG_DAT = '/hdd/epg.dat'
 date_format = '%Y-%m-%d'
 now = datetime.now()
 alloweddelta = 2
 CheckFile = 'LastUpdate.txt'
 ServerStatusList = {}
-
+MEDIA = ("/media/hdd/", "/media/usb/", "/media/mmc/", "/media/cf/", "/tmp")
 PARSERS = {'xmltv': 'gen_xmltv', 'genxmltv': 'gen_xmltv'}
+
+
+def findEpg():
+	candidates = []
+	for path in MEDIA:
+		try:
+			if os.path.exists(path):
+				for fn in os.listdir(path):
+					if "epg.dat" in fn:
+						ffn = os.path.join(path, fn)
+						candidates.append((os.path.getctime(ffn), ffn))
+		except:
+			pass  # ignore errors.
+	if not candidates:
+		return None
+	candidates.sort()  # order by ctime...
+	# best candidate is most recent filename.
+	return candidates[-1][1]
+
+
+HDD_EPG_DAT = findEpg() or '/hdd/epg.dat'
+
 
 try:
 	from twisted.internet import ssl
@@ -132,11 +153,11 @@ class OudeisImporter:
 
 
 def unlink_if_exists(filename):
-	if filename.endswith("epg.db"):
-		try:
-			os.unlink(filename)
-		except:
-			pass
+	# if filename.endswith("epg.db"):
+	try:
+		os.unlink(filename)
+	except:
+		pass
 
 
 class EPGImport:
@@ -342,8 +363,8 @@ class EPGImport:
 		if deleteFile and self.source.parser != 'epg.dat':
 			try:
 				print("[EPGImport] unlink ", filename)
-				if not filename.endswith("epg.db"):
-					os.unlink(filename)
+				# if not filename.endswith("epg.db"):
+				os.unlink(filename)
 			except Exception as e:
 				print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e)
 
@@ -375,8 +396,8 @@ class EPGImport:
 			reactor.addReader(self)
 		if deleteFile and filename:
 			try:
-				if not filename.endswith("epg.db"):
-					os.unlink(filename)
+				# if not filename.endswith("epg.db"):
+				os.unlink(filename)
 			except Exception as e:
 				print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e)
 
@@ -465,7 +486,7 @@ class EPGImport:
 			self.fd.close()
 			self.fd = None
 			self.iterator = None
-		# return
+		return
 
 	def closeImport(self):
 		self.closeReader()
