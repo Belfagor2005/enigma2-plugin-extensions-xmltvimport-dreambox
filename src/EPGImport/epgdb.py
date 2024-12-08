@@ -51,8 +51,8 @@ class epgdb_class:
 				self.ProcessingTimer_conn = self.ProcessingTimer.timeout.connect(self.start_process)
 			else:
 				self.ProcessingTimer.callback.append(self.start_process)
-				self.ProcessingTimer.start(10000, True)
-#           self.start_process()
+			self.ProcessingTimer.start(10000, True)
+			# self.start_process()
 
 	def start_process(self):
 		if os.path.exists(self.epgdb_path):
@@ -134,7 +134,7 @@ class epgdb_class:
 				channel = str(service)
 			ssid = service.split(":")
 			number_of_events = len(self.events)
-			if number_of_events > 0 and len(ssid) > 6:
+			if number_of_events > 0:  # and len(ssid) > 6:
 				# convert hex stuff to integer as epg.db likes it to have
 				self.sid = int(ssid[3], 16)
 				self.tsid = int(ssid[4], 16)

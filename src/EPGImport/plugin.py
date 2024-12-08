@@ -54,6 +54,11 @@ def calcDefaultStarttime():
 	return (5 * 60 * 60) + offset
 
 
+# config.misc.epgcache_filename
+# print('[EPGImport] oudeis patch not detected, using epg.dat instead.')
+# from . import epgdat_importer
+# self.storage = epgdat_importer.epgdatclass()
+
 # Set default configuration
 config.plugins.epgimport = ConfigSubsection()
 config.plugins.epgimport.enabled = ConfigEnableDisable(default=True)
@@ -72,6 +77,8 @@ config.plugins.epgimport.deepstandby = ConfigSelection(default="skip", choices=[
 	("wakeup", _("wake up and import")),
 	("skip", _("skip the import"))
 ])
+
+# config.plugins.epgimport.pathdb =
 config.plugins.epgimport.standby_afterwakeup = ConfigYesNo(default=False)
 config.plugins.epgimport.shutdown = ConfigYesNo(default=False)
 config.plugins.epgimport.longDescDays = ConfigNumber(default=5)
@@ -307,7 +314,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		if os.path.exists("/var/lib/opkg/status"):
 			self.updateTimer.callback.append(self.updateStatus)
 		else:
-			self.updateTimer_conn = self.updateTimer.timeout.connect(self.updateStatus) 
+			self.updateTimer_conn = self.updateTimer.timeout.connect(self.updateStatus)
 		self.updateTimer.start(2000)
 		self.updateStatus()
 		self.onLayoutFinish.append(self.__layoutFinished)
@@ -1183,6 +1190,7 @@ description = _("Automated EPG Importer")
 config.plugins.epgimport.showinextensions.addNotifier(setExtensionsmenu, initial_call=False, immediate_feedback=False)
 extDescriptor = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu)
 pluginlist = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon='plugin.png', fnc=main)
+
 
 def epgmenu(menuid, **kwargs):
 	# if getImageDistro() in ("openvix", "openbh", "ventonsupport", "egami", "openhdf", "opendroid"):
