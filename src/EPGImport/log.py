@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # logging for XMLTV importer
 #
 # One can simply use

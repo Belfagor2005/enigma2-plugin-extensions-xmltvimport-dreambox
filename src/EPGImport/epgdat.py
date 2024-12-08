@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# epgdat.py
+# -*- coding: utf-8 -*-
 
 from enigma import eEPGCache
 from ServiceReference import ServiceReference

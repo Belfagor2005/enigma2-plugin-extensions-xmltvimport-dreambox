@@ -1,4 +1,6 @@
-# for localized messages
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from . import _
 
 from Components.ActionMap import ActionMap
@@ -64,7 +66,7 @@ config.plugins.epgimport.runboot = ConfigSelection(default="4", choices=[
 config.plugins.epgimport.runboot_restart = ConfigYesNo(default=False)
 config.plugins.epgimport.runboot_day = ConfigYesNo(default=False)
 config.plugins.epgimport.wakeup = ConfigClock(default=calcDefaultStarttime())
-config.plugins.epgimport.showinplugins = ConfigYesNo(default=False)
+config.plugins.epgimport.showinplugins = ConfigYesNo(default=True)
 config.plugins.epgimport.showinextensions = ConfigYesNo(default=True)
 config.plugins.epgimport.deepstandby = ConfigSelection(default="skip", choices=[
 	("wakeup", _("wake up and import")),
@@ -77,7 +79,7 @@ config.plugins.epgimport.showinmainmenu = ConfigYesNo(default=False)
 config.plugins.epgimport.deepstandby_afterimport = NoSave(ConfigYesNo(default=False))
 config.plugins.epgimport.parse_autotimer = ConfigYesNo(default=False)
 config.plugins.epgimport.import_onlybouquet = ConfigYesNo(default=False)
-# config.plugins.epgimport.import_onlyiptv = ConfigYesNo(default=False)
+config.plugins.epgimport.import_onlyiptv = ConfigYesNo(default=False)
 config.plugins.epgimport.clear_oldepg = ConfigYesNo(default=False)
 config.plugins.epgimport.day_profile = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 config.plugins.extra_epgimport = ConfigSubsection()
@@ -184,8 +186,8 @@ def channelFilter(ref):
 	if not ref:
 		return False
 	# ignore non IPTV
-	# if config.plugins.epgimport.import_onlyiptv.value and ("%3a//" not in ref.lower() or ref.startswith("1")):
-		# return False
+	if config.plugins.epgimport.import_onlyiptv.value and ("%3a//" not in ref.lower() or ref.startswith("1")):
+		return False
 	strref = str(ref)
 	# channel = ServiceReference(strref).getServiceName()
 	ssid = strref.split(":")
@@ -347,7 +349,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.cfg_day_profile = getConfigListEntry(_("Choice days for start import"), self.EPG.day_profile)
 		self.cfg_runboot = getConfigListEntry(_("Start import after booting up"), self.EPG.runboot)
 		self.cfg_import_onlybouquet = getConfigListEntry(_("Load EPG only services in bouquets"), self.EPG.import_onlybouquet)
-		# self.cfg_import_onlyiptv = getConfigListEntry(_("Load EPG only for IPTV channels"), self.EPG.import_onlyiptv)
+		self.cfg_import_onlyiptv = getConfigListEntry(_("Load EPG only for IPTV channels"), self.EPG.import_onlyiptv)
 		self.cfg_runboot_day = getConfigListEntry(_("Consider setting \"Days Profile\""), self.EPG.runboot_day)
 		self.cfg_runboot_restart = getConfigListEntry(_("Skip import on restart GUI"), self.EPG.runboot_restart)
 		self.cfg_showinextensions = getConfigListEntry(_("Show \"EPGImport\" in extensions"), self.EPG.showinextensions)
@@ -376,7 +378,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		list.append(self.cfg_showinplugins)
 		list.append(self.cfg_showinmainmenu)
 		list.append(self.cfg_import_onlybouquet)
-		# list.append(self.cfg_import_onlyiptv)
+		list.append(self.cfg_import_onlyiptv)
 		if hasattr(enigma.eEPGCache, 'flushEPG'):
 			list.append(self.cfg_clear_oldepg)
 		list.append(self.cfg_longDescDays)
@@ -1182,6 +1184,28 @@ config.plugins.epgimport.showinextensions.addNotifier(setExtensionsmenu, initial
 extDescriptor = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu)
 pluginlist = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon='plugin.png', fnc=main)
 
+def epgmenu(menuid, **kwargs):
+	# if getImageDistro() in ("openvix", "openbh", "ventonsupport", "egami", "openhdf", "opendroid"):
+		# if menuid == "epg":
+			# return [(_("EPG-Importer"), main, "epgimporter", 1002)]
+		# else:
+			# return []
+	# elif getImageDistro() in ("openatv"):
+		# if menuid == "epg":
+			# return [(_("EPG-Importer"), main, "epgimporter", None)]
+		# else:
+			# return []
+	# elif getImageDistro() in ("teamblue"):
+		# if menuid == "epg_menu":
+			# return [(_("EPG-Importer"), main, "epgimporter", 95)]
+		# else:
+			# return []
+	# else:
+	if menuid == "setup":
+		return [(_("EPGImport"), main, "epgimporter", 1002)]
+	else:
+		return []
+
 
 def Plugins(**kwargs):
 	result = [
@@ -1206,7 +1230,7 @@ def Plugins(**kwargs):
 			name="EPG importer",
 			description=description,
 			where=PluginDescriptor.WHERE_MENU,
-			fnc=main_menu
+			fnc=epgmenu  # fnc=main_menu
 		),
 	]
 	if config.plugins.epgimport.showinextensions.value:

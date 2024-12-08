@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 if os.path.exists("/var/lib/dpkg/status"):
 	import epgdb

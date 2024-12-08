@@ -1,7 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import time
 import calendar
 import log
-# from pprint import pprint
 from xml.etree.cElementTree import iterparse
 
 
