@@ -131,10 +131,11 @@ class OudeisImporter:
 
 
 def unlink_if_exists(filename):
-	try:
-		os.unlink(filename)
-	except:
-		pass
+	if filename.endswith("epg.db"):
+		try:
+			os.unlink(filename)
+		except:
+			pass
 
 
 class EPGImport:
@@ -152,7 +153,7 @@ class EPGImport:
 		self.onDone = None
 		self.epgcache = epgcache
 		self.channelFilter = channelFilter
-		return
+		# return
 
 	def checkValidServer(self, serverurl):
 		dirname, filename = os.path.split(serverurl)
@@ -340,7 +341,8 @@ class EPGImport:
 		if deleteFile and self.source.parser != 'epg.dat':
 			try:
 				print("[EPGImport] unlink ", filename)
-				os.unlink(filename)
+				if not filename.endswith("epg.db"):
+					os.unlink(filename)
 			except Exception as e:
 				print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e)
 
@@ -372,7 +374,8 @@ class EPGImport:
 			reactor.addReader(self)
 		if deleteFile and filename:
 			try:
-				os.unlink(filename)
+				if not filename.endswith("epg.db"):
+					os.unlink(filename)
 			except Exception as e:
 				print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e)
 
@@ -461,7 +464,7 @@ class EPGImport:
 			self.fd.close()
 			self.fd = None
 			self.iterator = None
-		return
+		# return
 
 	def closeImport(self):
 		self.closeReader()

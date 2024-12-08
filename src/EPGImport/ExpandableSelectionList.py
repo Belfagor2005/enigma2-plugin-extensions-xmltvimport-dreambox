@@ -84,7 +84,7 @@ class ExpandableSelectionList(MenuList):
 	def __init__(self, tree=None, enableWrapAround=False):
 		'tree is expected to be a list of categories'
 		MenuList.__init__(self, [], enableWrapAround, content=eListboxPythonMultiContent)
-#       font = skin.fonts.get("SelectionList", ("Regular", 20, 30))
+		# font = skin.fonts.get("SelectionList", ("Regular", 20, 30))
 		if sz_w == 1920:
 			font = ("Regular", 28, 50)
 		else:

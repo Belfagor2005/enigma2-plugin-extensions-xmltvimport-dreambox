@@ -5,10 +5,16 @@ import log
 from xml.etree.cElementTree import iterparse
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 # %Y%m%d%H%M%S
 def quickptime(str):
 	return time.struct_time((int(str[0:4]), int(str[4:6]), int(str[6:8]),
-							int(str[8:10]), int(str[10:12]), 0, -1, -1, 0))
+							 int(str[8:10]), int(str[10:12]), 0, -1, -1, 0))
 
 
 def get_time_utc(timestring, fdateparse):
@@ -204,4 +210,3 @@ class XMLTVConverter:
 			elif len(category) > 0:
 				return category[0]
 		return 0
-

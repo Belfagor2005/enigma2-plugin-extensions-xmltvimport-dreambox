@@ -84,7 +84,7 @@ class EPGChannel:
 								self.items[id] = [ref]
 					elem.clear()
 		except Exception as e:
-			log.write("[EPGImport] failed to parse %s Error: %s" % (downloadedFile, e)
+			log.write("[EPGImport] failed to parse %s Error: %s" % (downloadedFile, e))
 			pass
 
 	def update(self, filterCallback, downloadedFile=None):

@@ -1,26 +1,39 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
 from Components.Language import language
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-import os
 import gettext
+import os
 
-PluginLanguageDomain = "EPGImport"
-PluginLanguagePath = "Extensions/EPGImport/locale"
+
+PluginLanguageDomain = 'EPGImport'
+PluginLanguagePath = 'Extensions/EPGImport/locale'
+
+
+isDreambox = False
+if os.path.exists("/usr/bin/apt-get"):
+    isDreambox = True
 
 
 def localeInit():
-	gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
+    if isDreambox:
+        lang = language.getLanguage()[:2]
+        os.environ["LANGUAGE"] = lang
+    gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
 
 
-def _(txt):
-	if gettext.dgettext(PluginLanguageDomain, txt):
-		return gettext.dgettext(PluginLanguageDomain, txt)
-	else:
-		print("[" + PluginLanguageDomain + "] fallback to default translation for " + txt)
-		return gettext.gettext(txt)
-
-
-if os.path.exists("/var/lib/opkg/status"):
-	language.addCallback(localeInit())
+if isDreambox:
+    def _(txt):
+        return gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
 else:
-	language.addCallback(localeInit)
+    def _(txt):
+        translated = gettext.dgettext(PluginLanguageDomain, txt)
+        if translated:
+            return translated
+        else:
+            print(("[%s] fallback to default translation for %s" % (PluginLanguageDomain, txt)))
+            return gettext.gettext(txt)
+
+localeInit()
+language.addCallback(localeInit)

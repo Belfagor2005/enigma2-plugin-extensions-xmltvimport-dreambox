@@ -117,48 +117,52 @@ class filtersServicesSetup(Screen):
 	if sz_w == 1920:
 		skin = """
 		<screen name="filtersServicesSetup" position="center,170" size="1200,820" title="Ignore services list">
-		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-		<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
-		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_red" transparent="1" valign="center" zPosition="1" />
-		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_green" transparent="1" valign="center" zPosition="1" />
-		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_yellow" transparent="1" valign="center" zPosition="1" />
-		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_blue" transparent="1" valign="center" zPosition="1" />
-		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-		<widget enableWrapAround="1" source="list" render="Listbox" position="10,90" scrollbarMode="showOnDemand" size="1180,721">
-			<convert type="TemplatedMultiContent">
-				{"template": [
-				MultiContentEntryText(pos=(10,3),size=(1160,35),font=0,flags=RT_HALIGN_LEFT,text=0),
-				MultiContentEntryText(pos=(10,40),size=(1160,32),font=1,flags=RT_HALIGN_LEFT,text=1),
-				MultiContentEntryText(pos=(10,72),size=(1160,30),font=2,flags=RT_HALIGN_LEFT,text=2),],
-				 "fonts":[gFont("Regular",30),gFont("Regular",26),gFont("Regular",24)],
-				 "itemHeight":103}
-			</convert>
-		</widget>
+			<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+			<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+			<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+			<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+			<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_red" transparent="1" valign="center" zPosition="1" />
+			<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_green" transparent="1" valign="center" zPosition="1" />
+			<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_yellow" transparent="1" valign="center" zPosition="1" />
+			<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_blue" transparent="1" valign="center" zPosition="1" />
+			<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+			<widget enableWrapAround="1" source="list" render="Listbox" position="10,90" scrollbarMode="showOnDemand" size="1180,721">
+				<convert type="TemplatedMultiContent">
+					{"template": [
+						MultiContentEntryText(pos=(10,3),size=(1160,35),font=0,flags=RT_HALIGN_LEFT,text=0),
+						MultiContentEntryText(pos=(10,40),size=(1160,32),font=1,flags=RT_HALIGN_LEFT,text=1),
+						MultiContentEntryText(pos=(10,72),size=(1160,30),font=2,flags=RT_HALIGN_LEFT,text=2),],
+					"fonts":[gFont("Regular",30),gFont("Regular",26),gFont("Regular",24)],
+					"itemHeight":103}
+				</convert>
+			</widget>
+			<eLabel backgroundColor="grey" position="10,730" size="1260,1" />
+			<widget name="introduction" position="20,750" size="1240,50" font="Regular;24" halign="center" valign="center" />
 		</screen>"""
 	else:
 		skin = """
 		<screen name="filtersServicesSetup" position="center,120" size="820,520" title="Ignore services list">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,50" scale="stretch"/>
-		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,50" scale="stretch"/>
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,50" scale="stretch"/>
-		<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,50" scale="stretch"/>
-		<widget name="key_red" position="10,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_green" position="210,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_yellow" position="410,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_blue" position="610,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<eLabel position="10,60" size="800,1" backgroundColor="grey"/>
-		<widget enableWrapAround="1" source="list" render="Listbox" position="10,65" size="800,450" scrollbarMode="showOnDemand" >
-			<convert type="TemplatedMultiContent">
-				{"template": [
-				MultiContentEntryText(pos=(10,2),size=(780,27),font=0,flags=RT_HALIGN_LEFT,text=0),
-				MultiContentEntryText(pos=(10,30),size=(780,22),font=1,flags=RT_HALIGN_LEFT,text=1),
-				MultiContentEntryText(pos=(10,52),size=(780,20),font=2,flags=RT_HALIGN_LEFT,text=2),],
-				 "fonts":[gFont("Regular",22),gFont("Regular",18),gFont("Regular",16)],
-				 "itemHeight":75}
-			</convert>
-		</widget>
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,50" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,50" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,50" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,50" scale="stretch"/>
+			<widget name="key_red" position="10,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_green" position="210,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_yellow" position="410,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_blue" position="610,5" size="200,50" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<eLabel position="10,60" size="800,1" backgroundColor="grey"/>
+			<widget enableWrapAround="1" source="list" render="Listbox" position="10,65" size="800,450" scrollbarMode="showOnDemand" >
+				<convert type="TemplatedMultiContent">
+					{"template": [
+					MultiContentEntryText(pos=(10,2),size=(780,27),font=0,flags=RT_HALIGN_LEFT,text=0),
+					MultiContentEntryText(pos=(10,30),size=(780,22),font=1,flags=RT_HALIGN_LEFT,text=1),
+					MultiContentEntryText(pos=(10,52),size=(780,20),font=2,flags=RT_HALIGN_LEFT,text=2),],
+					 "fonts":[gFont("Regular",22),gFont("Regular",18),gFont("Regular",16)],
+					 "itemHeight":75}
+				</convert>
+			</widget>
+			<eLabel position="10,460" size="800,1" backgroundColor="grey" />
+			<widget name="introduction" position="10,475" size="800,30" font="Regular;20" halign="center" valign="center" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -173,6 +177,7 @@ class filtersServicesSetup(Screen):
 		self["key_green"] = Label(_("Add Provider"))
 		self["key_yellow"] = Label(_("Add Channel"))
 		self["key_blue"] = Label(" ")
+		self["introduction"] = Label(_("press OK to save list"))
 		self.updateButtons()
 
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],

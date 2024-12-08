@@ -1,14 +1,14 @@
 # for localized messages
 from . import _
 
-from Components.config import config, ConfigEnableDisable, ConfigSubsection, \
-	ConfigYesNo, ConfigClock, getConfigListEntry, ConfigText, \
-	ConfigSelection, ConfigNumber, ConfigSubDict, NoSave
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
+from Components.config import config, ConfigEnableDisable, ConfigSubsection, \
+	ConfigYesNo, ConfigClock, getConfigListEntry, ConfigText, \
+	ConfigSelection, ConfigNumber, ConfigSubDict, NoSave
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
@@ -22,18 +22,13 @@ from sqlite3 import dbapi2 as sqlite
 import Components.PluginComponent
 import Screens.Standby
 import enigma
-import log
 import os
 import time
-
+from . import log
 from . import ExpandableSelectionList
 from . import EPGImport
 from . import EPGConfig
 from . import filtersServices
-
-
-if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/GoldenPanel/plugin.pyo"):
-	os.remove("/usr/lib/enigma2/python/Plugins/Extensions/GoldenPanel/plugin.pyo")
 
 try:
 	from Tools.StbHardware import getFPWasTimerWakeup
@@ -69,6 +64,7 @@ config.plugins.epgimport.runboot = ConfigSelection(default="4", choices=[
 config.plugins.epgimport.runboot_restart = ConfigYesNo(default=False)
 config.plugins.epgimport.runboot_day = ConfigYesNo(default=False)
 config.plugins.epgimport.wakeup = ConfigClock(default=calcDefaultStarttime())
+config.plugins.epgimport.showinplugins = ConfigYesNo(default=False)
 config.plugins.epgimport.showinextensions = ConfigYesNo(default=True)
 config.plugins.epgimport.deepstandby = ConfigSelection(default="skip", choices=[
 	("wakeup", _("wake up and import")),
@@ -80,7 +76,8 @@ config.plugins.epgimport.longDescDays = ConfigNumber(default=5)
 config.plugins.epgimport.showinmainmenu = ConfigYesNo(default=False)
 config.plugins.epgimport.deepstandby_afterimport = NoSave(ConfigYesNo(default=False))
 config.plugins.epgimport.parse_autotimer = ConfigYesNo(default=False)
-config.plugins.epgimport.import_onlybouquet = ConfigYesNo(default=True)
+config.plugins.epgimport.import_onlybouquet = ConfigYesNo(default=False)
+# config.plugins.epgimport.import_onlyiptv = ConfigYesNo(default=False)
 config.plugins.epgimport.clear_oldepg = ConfigYesNo(default=False)
 config.plugins.epgimport.day_profile = ConfigSelection(choices=[("1", _("Press OK"))], default="1")
 config.plugins.extra_epgimport = ConfigSubsection()
@@ -184,6 +181,11 @@ def getBouquetChannelList():
 
 
 def channelFilter(ref):
+	if not ref:
+		return False
+	# ignore non IPTV
+	# if config.plugins.epgimport.import_onlyiptv.value and ("%3a//" not in ref.lower() or ref.startswith("1")):
+		# return False
 	strref = str(ref)
 	# channel = ServiceReference(strref).getServiceName()
 	ssid = strref.split(":")
@@ -300,8 +302,10 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.filterStatusTemplate = _("Filtering: %s\nPlease wait!")
 		self.importStatusTemplate = _("Importing: %s\n%s events")
 		self.updateTimer = enigma.eTimer()
-#       self.updateTimer.callback.append(self.updateStatus)
-		self.updateTimer_conn = self.updateTimer.timeout.connect(self.updateStatus)
+		if os.path.exists("/var/lib/opkg/status"):
+			self.updateTimer.callback.append(self.updateStatus)
+		else:
+			self.updateTimer_conn = self.updateTimer.timeout.connect(self.updateStatus) 
 		self.updateTimer.start(2000)
 		self.updateStatus()
 		self.onLayoutFinish.append(self.__layoutFinished)
@@ -343,9 +347,11 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.cfg_day_profile = getConfigListEntry(_("Choice days for start import"), self.EPG.day_profile)
 		self.cfg_runboot = getConfigListEntry(_("Start import after booting up"), self.EPG.runboot)
 		self.cfg_import_onlybouquet = getConfigListEntry(_("Load EPG only services in bouquets"), self.EPG.import_onlybouquet)
+		# self.cfg_import_onlyiptv = getConfigListEntry(_("Load EPG only for IPTV channels"), self.EPG.import_onlyiptv)
 		self.cfg_runboot_day = getConfigListEntry(_("Consider setting \"Days Profile\""), self.EPG.runboot_day)
 		self.cfg_runboot_restart = getConfigListEntry(_("Skip import on restart GUI"), self.EPG.runboot_restart)
 		self.cfg_showinextensions = getConfigListEntry(_("Show \"EPGImport\" in extensions"), self.EPG.showinextensions)
+		self.cfg_showinplugins = getConfigListEntry(_("Show \"EPGImport\" in plugins"), self.EPG.showinplugins)
 		self.cfg_showinmainmenu = getConfigListEntry(_("Show \"EPG Importer\" in main menu"), self.EPG.showinmainmenu)
 		self.cfg_longDescDays = getConfigListEntry(_("Load long descriptions up to X days"), self.EPG.longDescDays)
 		self.cfg_parse_autotimer = getConfigListEntry(_("Run AutoTimer after import"), self.EPG.parse_autotimer)
@@ -367,8 +373,10 @@ class EPGImportConfig(ConfigListScreen, Screen):
 			if self.EPG.runboot.value == "1" or self.EPG.runboot.value == "2":
 				list.append(self.cfg_runboot_restart)
 		list.append(self.cfg_showinextensions)
+		list.append(self.cfg_showinplugins)
 		list.append(self.cfg_showinmainmenu)
 		list.append(self.cfg_import_onlybouquet)
+		# list.append(self.cfg_import_onlyiptv)
 		if hasattr(enigma.eEPGCache, 'flushEPG'):
 			list.append(self.cfg_clear_oldepg)
 		list.append(self.cfg_longDescDays)
@@ -539,7 +547,7 @@ class EPGImportSources(Screen):
 		Screen.__init__(self, session)
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button(_("Save"))
-		self["key_blue"] = Button(_("Reset"))
+		self["key_blue"] = Button()
 		cfg = EPGConfig.loadUserSettings()
 		filter = cfg["sources"]
 		tree = []
@@ -563,6 +571,10 @@ class EPGImportSources(Screen):
 			self["key_yellow"] = Button(_("Import"))
 		else:
 			self["key_yellow"] = Button()
+		if os.path.exists("/var/lib/opkg/status"):
+			self["key_blue"] = Button()
+		else:
+			self["key_blue"] = Button(_("Reset"))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
 		{
 			"red": self.cancel,
@@ -602,6 +614,8 @@ class EPGImportSources(Screen):
 
 	def do_reset(self):
 		log.write("[EPGImport] create empty epg.db")
+		if os.path.exists("/var/lib/opkg/status"):
+			return
 		self.epginstance = eEPGCache.getInstance()
 		if os.path.exists(config.misc.epgcache_filename.value):
 			os.remove(config.misc.epgcache_filename.value)
@@ -749,7 +763,7 @@ class EPGImportLog(Screen):
 		self["key_yellow"] = Button()
 		self["key_blue"] = Button(_("Save"))
 		self["list"] = ScrollLabel(log.getvalue())
-		self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions"],
+		self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"],
 		{
 			"red": self.clear,
 			"green": self.cancel,
@@ -763,7 +777,8 @@ class EPGImportLog(Screen):
 			"up": self["list"].pageUp,
 			"down": self["list"].pageDown,
 			"pageUp": self["list"].pageUp,
-			"pageDown": self["list"].pageDown
+			"pageDown": self["list"].pageDown,
+			"menu": self.cancel,
 		}, -2)
 		self.onLayoutFinish.append(self.setCustomTitle)
 
@@ -869,9 +884,10 @@ class checkDeepstandby:
 		self.session = session
 		if parse:
 			self.FirstwaitCheck = enigma.eTimer()
-#           self.FirstwaitCheck.callback.append(self.runCheckDeepstandby)
-			self.FirstwaitCheck_conn = self.FirstwaitCheck.timeout.connect(self.runCheckDeepstandby)
-			self.FirstwaitCheck.callback.append(self.runCheckDeepstandby)
+			if os.path.exists("/var/lib/opkg/status"):
+				self.FirstwaitCheck.callback.append(self.runCheckDeepstandby)
+			else:
+				self.FirstwaitCheck_conn = self.FirstwaitCheck.timeout.connect(self.runCheckDeepstandby)
 			self.FirstwaitCheck.startLongTimer(600)
 			log.write("[EPGImport] Wait for parse autotimers 30 sec.")
 		else:
@@ -916,11 +932,15 @@ class AutoStartTimer:
 		self.prev_onlybouquet = config.plugins.epgimport.import_onlybouquet.value
 		self.prev_multibouquet = config.usage.multibouquet.value
 		self.timer = enigma.eTimer()
-#       self.timer.callback.append(self.onTimer)
-		self.timer_conn = self.timer.timeout.connect(self.onTimer)
+		if os.path.exists("/var/lib/opkg/status"):
+			self.timer.callback.append(self.onTimer)
+		else:
+			self.timer_conn = self.timer.timeout.connect(self.onTimer)
 		self.pauseAfterFinishImportCheck = enigma.eTimer()
-#       self.pauseAfterFinishImportCheck.callback.append(self.afterFinishImportCheck)
-		self.pauseAfterFinishImportCheck_conn = self.pauseAfterFinishImportCheck.timeout.connect(self.afterFinishImportCheck)
+		if os.path.exists("/var/lib/opkg/status"):
+			self.pauseAfterFinishImportCheck.callback.append(self.afterFinishImportCheck)
+		else:
+			self.pauseAfterFinishImportCheck_conn = self.pauseAfterFinishImportCheck.timeout.connect(self.afterFinishImportCheck)
 		self.pauseAfterFinishImportCheck.startLongTimer(30)
 		self.update()
 
@@ -1112,7 +1132,6 @@ def autostart(reason, session=None, **kwargs):
 	"called with reason=1 to during shutdown, with reason=0 at startup?"
 	global autoStartTimer
 	global _session
-	# log.write("[EPGImport] autostart (%s) occured at (%s)\n" % (reason, time.time()))
 	log.write("[EPGImport] autostart (%s) occured at (%s)" % (reason, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 	if reason == 0 and _session is None:
 		if session is not None:
@@ -1161,6 +1180,7 @@ def setExtensionsmenu(el):
 description = _("Automated EPG Importer")
 config.plugins.epgimport.showinextensions.addNotifier(setExtensionsmenu, initial_call=False, immediate_feedback=False)
 extDescriptor = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu)
+pluginlist = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon='plugin.png', fnc=main)
 
 
 def Plugins(**kwargs):
@@ -1175,13 +1195,13 @@ def Plugins(**kwargs):
 			fnc=autostart,
 			wakeupfnc=getNextWakeup
 		),
-		PluginDescriptor(
-			name=_("EPGImport"),
-			description=description,
-			where=PluginDescriptor.WHERE_PLUGINMENU,
-			icon='plugin.png',
-			fnc=main
-		),
+		# PluginDescriptor(
+			# name=_("EPGImport"),
+			# description=description,
+			# where=PluginDescriptor.WHERE_PLUGINMENU,
+			# icon='plugin.png',
+			# fnc=main
+		# ),
 		PluginDescriptor(
 			name="EPG importer",
 			description=description,
@@ -1191,4 +1211,6 @@ def Plugins(**kwargs):
 	]
 	if config.plugins.epgimport.showinextensions.value:
 		result.append(extDescriptor)
+	if config.plugins.epgimport.showinplugins.value:
+		result.append(pluginlist)
 	return result

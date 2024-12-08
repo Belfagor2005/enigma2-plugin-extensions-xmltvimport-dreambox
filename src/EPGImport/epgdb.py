@@ -108,10 +108,13 @@ class epgdb_class:
 	def add_event(self, starttime, duration, title, description, language):
 		self.events.append((starttime, duration, title[:240], description, language))
 
-	def preprocess_events_channel(self, services):
+	def preprocess_events_channel(self, services=None):
 		if self.connection is None:
 			print("[EPGDB] not connected, retrying")
 			self.start_process()
+		# if services is None:
+			# # reset event container
+			# self.events=[]
 		# one local cursor per table seems to perform slightly better ...
 		cursor_service = self.connection.cursor()
 		cursor_event = self.connection.cursor()
