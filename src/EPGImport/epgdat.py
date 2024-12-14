@@ -15,7 +15,7 @@ class epgdat_class:
 
 	# initialize an empty dictionary (Python array)
 	# as channel events container before preprocessing
-	events=[]
+	events = []
 
 	def __init__(self, provider_name, provider_priority, epgdb_path=None):
 		self.source_name = provider_name

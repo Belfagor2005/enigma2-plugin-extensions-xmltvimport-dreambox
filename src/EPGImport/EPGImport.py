@@ -44,14 +44,17 @@ PARSERS = {'xmltv': 'gen_xmltv', 'genxmltv': 'gen_xmltv'}
 
 
 def getMountPoints():
-	mount_points = []
-	with open('/proc/mounts', 'r') as mounts:
-		for line in mounts:
-			parts = line.split()
-			mount_point = parts[1]
-			if os.path.ismount(mount_point):
-				mount_points.append(mount_point)
-	return mount_points
+    mount_points = []
+    try:
+        with open('/proc/mounts', 'r') as mounts:
+            for line in mounts:
+                parts = line.split()
+                mount_point = parts[1]
+                if os.path.ismount(mount_point) and os.access(mount_point, os.W_OK):
+                    mount_points.append(mount_point)
+    except Exception as e:
+        print("[EPGImport] Errore durante la lettura di /proc/mounts:", e)
+    return mount_points
 
 
 mount_points = getMountPoints()
@@ -112,28 +115,62 @@ def getTimeFromHourAndMinutes(hour, minute):
 
 
 def bigStorage(minFree, default, *candidates):
+	"""
+	Restituisce il percorso di storage con spazio libero sufficiente.
+
+	Args:
+		minFree (int): Lo spazio minimo libero richiesto in byte.
+		default (str): Il percorso predefinito.
+		candidates (*args): Percorsi opzionali da verificare.
+
+	Returns:
+		str: Il percorso che soddisfa i requisiti o il percorso predefinito.
+	"""
 	try:
+		# Controlla se il percorso predefinito soddisfa i requisiti.
 		diskstat = os.statvfs(default)
 		free = diskstat.f_bfree * diskstat.f_bsize
-		if free > minFree and free > 50000000:
+		if free > minFree and free > 25000000:  # Almeno 25 MB di spazio libero.
 			return default
 	except Exception as e:
-		print("[EPGImport] Failed to stat %s: %s" % (default, e))
-
-	mounts = open('/proc/mounts', 'rb').readlines()
-	# format: device mountpoint fstype options #
-	mountpoints = [x.split(' ', 2)[1] for x in mounts]
+		print("[bigStorage] Impossibile ottenere informazioni su %s: %s" % (default, e))
+	# Ottieni tutti i mount points.
+	all_mount_points = getMountPoints()
+	# Verifica i candidati tra i mount points validi.
 	for candidate in candidates:
-		if candidate in mountpoints:
+		if candidate in all_mount_points:
 			try:
 				diskstat = os.statvfs(candidate)
 				free = diskstat.f_bfree * diskstat.f_bsize
 				if free > minFree:
 					return candidate
-			except:
-				pass
-
+			except Exception as e:
+				print("[bigStorage] Impossibile ottenere informazioni su %s: %s" % (candidate, e))
 	return default
+
+# def bigStorage(minFree, default, *candidates):
+	# try:
+		# diskstat = os.statvfs(default)
+		# free = diskstat.f_bfree * diskstat.f_bsize
+		# if free > minFree and free > 25000000:
+			# return default
+	# except Exception as e:
+		# print("[EPGImport] Failed to stat %s: %s" % (default, e))
+
+	# mounts = open('/proc/mounts', 'rb').readlines()
+	# # format: device mountpoint fstype options #
+	# mountpoints = [x.split(' ', 2)[1] for x in mounts]
+	# for candidate in candidates:
+		# if candidate in mountpoints:
+			# try:
+				# diskstat = os.statvfs(candidate)
+				# free = diskstat.f_bfree * diskstat.f_bsize
+				# if free > minFree:
+					# return candidate
+			# except:
+				# pass
+
+	# return default
 
 
 class OudeisImporter(object):
@@ -532,13 +569,10 @@ class EPGImport(object):
 		return self.source is not None
 
 	def legacyDownload(self, result, afterDownload, downloadFail, sourcefile, filename, deleteFile=True):
-
 		print("[EPGImport] IPv6 download failed, falling back to IPv4: " + str(sourcefile))
-
 		if sourcefile.startswith("https") and sslverify:
 			parsed_uri = urlparse(sourcefile)
 			domain = parsed_uri.hostname
-
 			# check for redirects
 			try:
 				import requests
@@ -564,6 +598,10 @@ class EPGImport(object):
 	def do_download(self, sourcefile, afterDownload, downloadFail):
 		# path = bigStorage(9000000, '/tmp', '/media/DOMExtender', '/media/cf', '/media/mmc', '/media/usb', '/media/hdd')
 		path = bigStorage(9000000, *mount_points)
+		if not path or not os.path.isdir(path):
+			print("[EPGImport] Percorso non valido, usando '/tmp'")
+			path = '/tmp'  # Usa un fallback come /tmp se il percorso non è valido.
+
 		filename = os.path.join(path, 'epgimport')
 		ext = os.path.splitext(sourcefile)[1]
 		# Keep sensible extension, in particular the compression type
@@ -571,9 +609,7 @@ class EPGImport(object):
 			filename += ext
 		# sourcefile = sourcefile.encode('utf-8')
 		sourcefile = str(sourcefile)
-
 		print("[EPGImport] Downloading: " + str(sourcefile) + " to local path: " + str(filename))
-
 		ip6 = sourcefile6 = None
 		if has_ipv6 and version_info >= (2, 7, 11) and ((version.major == 15 and version.minor >= 5) or version.major >= 16):
 			host = sourcefile.split('/')[2]

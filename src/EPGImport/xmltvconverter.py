@@ -14,6 +14,8 @@ except NameError:
 
 
 # %Y%m%d%H%M%S
+
+
 def quickptime(str):
 	return time.struct_time((int(str[0:4]), int(str[4:6]), int(str[6:8]),
 							 int(str[8:10]), int(str[10:12]), 0, -1, -1, 0))

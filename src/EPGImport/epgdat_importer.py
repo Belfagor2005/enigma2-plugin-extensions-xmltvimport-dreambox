@@ -18,14 +18,17 @@ else:
 
 
 def getMountPoints():
-	mount_points = []
-	with open('/proc/mounts', 'r') as mounts:
-		for line in mounts:
-			parts = line.split()
-			mount_point = parts[1]
-			if os.path.ismount(mount_point):
-				mount_points.append(mount_point)
-	return mount_points
+    mount_points = []
+    try:
+        with open('/proc/mounts', 'r') as mounts:
+            for line in mounts:
+                parts = line.split()
+                mount_point = parts[1]
+                if os.path.ismount(mount_point) and os.access(mount_point, os.W_OK):
+                    mount_points.append(mount_point)
+    except Exception as e:
+        print("[EPGImport] Errore durante la lettura di /proc/mounts:", e)
+    return mount_points
 
 
 mount_points = getMountPoints()
@@ -64,7 +67,7 @@ class epgdatclass:
 			self.epg = epgdat.epgdat_class(path, settingspath, self.epgfile)
 
 	def importEvents(self, services, dataTupleList):
-		'This method is called repeatedly for each bit of data'
+		# 'This method is called repeatedly for each bit of data'
 		if services != self.services:
 			self.commitService()
 			self.services = services

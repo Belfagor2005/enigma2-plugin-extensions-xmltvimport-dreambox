@@ -19,11 +19,11 @@ from ServiceReference import ServiceReference
 from Tools import Notifications
 from Tools.Directories import fileExists
 from Tools.FuzzyDate import FuzzyTime
-from enigma import eEPGCache, eDVBDB, getDesktop
+from enigma import eEPGCache, eDVBDB, getDesktop, eTimer, eServiceCenter, eServiceReference
 from sqlite3 import dbapi2 as sqlite
 import Components.PluginComponent
 import Screens.Standby
-import enigma
+# import enigma
 import os
 import time
 from . import log
@@ -121,7 +121,7 @@ isFilterRunning = 0
 def getAlternatives(service):
     if not service:
         return None
-    alternativeServices = enigma.eServiceCenter.getInstance().list(service)
+    alternativeServices = eServiceCenter.getInstance().list(service)
     return alternativeServices and alternativeServices.getContent("S", True)
 
 
@@ -129,19 +129,19 @@ def getBouquetChannelList():
     channels = []
     global isFilterRunning, filterCounter
     isFilterRunning = 1
-    serviceHandler = enigma.eServiceCenter.getInstance()
-    mask = (enigma.eServiceReference.isMarker | enigma.eServiceReference.isDirectory)
-    altrernative = enigma.eServiceReference.isGroup
+    serviceHandler = eServiceCenter.getInstance()
+    mask = (eServiceReference.isMarker | eServiceReference.isDirectory)
+    altrernative = eServiceReference.isGroup
     if config.usage.multibouquet.value:
         bouquet_rootstr = '1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "bouquets.tv" ORDER BY bouquet'
-        bouquet_root = enigma.eServiceReference(bouquet_rootstr)
+        bouquet_root = eServiceReference(bouquet_rootstr)
         list = serviceHandler.list(bouquet_root)
         if list:
             while True:
                 s = list.getNext()
                 if not s.valid():
                     break
-                if s.flags & enigma.eServiceReference.isDirectory:
+                if s.flags & eServiceReference.isDirectory:
                     info = serviceHandler.info(s)
                     if info:
                         clist = serviceHandler.list(s)
@@ -165,7 +165,7 @@ def getBouquetChannelList():
                                             channels.append(refstr)
     else:
         bouquet_rootstr = '1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.favourites.tv" ORDER BY bouquet'
-        bouquet_root = enigma.eServiceReference(bouquet_rootstr)
+        bouquet_root = eServiceReference(bouquet_rootstr)
         services = serviceHandler.list(bouquet_root)
         if services is not None:
             while True:
@@ -190,8 +190,8 @@ def getBouquetChannelList():
 
 
 def channelFilter(ref):
-    if not ref:
-        return False
+    # if not ref:
+        # return False
     # ignore non IPTV
     if config.plugins.epgimport.import_onlyiptv.value and ("%3a//" not in ref.lower() or ref.startswith("1")):
         return False
@@ -222,7 +222,7 @@ def channelFilter(ref):
         return True
 
 
-epgimport = EPGImport.EPGImport(enigma.eEPGCache.getInstance(), channelFilter)
+epgimport = EPGImport.EPGImport(eEPGCache.getInstance(), channelFilter)
 
 lastImportResult = None
 
@@ -245,7 +245,7 @@ sz_w = getDesktop(0).size().width()
 class EPGImportConfig(ConfigListScreen, Screen):
     if sz_w == 1920:
         skin = """
-            <screen position="center,170" size="1200,820" title="EPG Import Configuration" >
+            <screen position="center,170" size="1200,820" title="EPG Import Configuration">
                 <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
                 <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
                 <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
@@ -255,15 +255,16 @@ class EPGImportConfig(ConfigListScreen, Screen):
                 <widget backgroundColor="#a08500" font="Regular;30" halign="center" name="key_yellow" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#18188b" font="Regular;30" halign="center" name="key_blue" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-                <widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,630" />
+                <widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,575" />
                 <eLabel backgroundColor="grey" position="10,730" size="1180,1" />
-                <widget font="Regular;32" halign="center" name="status" position="110,735" size="980,75" valign="center" />
+                <widget font="Regular;32" halign="center" name="status" position="110,667" size="980,75" valign="center" />
+                <widget font="Regular;32" halign="center" name="statusbar" position="110,735" size="980,75" valign="center" />
                 <ePixmap pixmap="Default-FHD/skin_default/icons/info.svg" position="10,770" size="80,40" />
                 <ePixmap pixmap="Default-FHD/skin_default/icons/menu.svg" position="1110,770" size="80,40" />
             </screen>"""
     else:
         skin = """
-            <screen position="center,120" size="820,520" title="EPG Import Configuration" >
+            <screen position="center,120" size="820,520" title="EPG Import Configuration">
                 <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
@@ -275,7 +276,8 @@ class EPGImportConfig(ConfigListScreen, Screen):
                 <eLabel position="10,50" size="800,1" backgroundColor="grey" />
                 <widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
                 <eLabel position="10,435" size="800,1" backgroundColor="grey" />
-                <widget name="status" position="80,445" size="660,50" font="Regular;22" halign="center" valign="center"/>
+                <widget name="status" position="79,474" size="660,50" font="Regular;22" halign="center" valign="center" />
+                <widget name="statusbar" position="80,430" size="660,50" font="Regular;22" halign="center" valign="center" />
                 <ePixmap pixmap="skin_default/buttons/key_info.png" position="10,488" size="50,25" />
                 <ePixmap pixmap="skin_default/buttons/key_menu.png" position="760,488" size="50,25" />
             </screen>"""
@@ -308,7 +310,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
         self.createSetup()
         self.filterStatusTemplate = _("Filtering: %s\nPlease wait!")
         self.importStatusTemplate = _("Importing: %s\n%s events")
-        self.updateTimer = enigma.eTimer()
+        self.updateTimer = eTimer()
         if os.path.exists("/var/lib/opkg/status"):
             self.updateTimer.callback.append(self.updateStatus)
         else:
@@ -384,7 +386,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
         list.append(self.cfg_showinmainmenu)
         list.append(self.cfg_import_onlybouquet)
         list.append(self.cfg_import_onlyiptv)
-        if hasattr(enigma.eEPGCache, 'flushEPG'):
+        if hasattr(eEPGCache, 'flushEPG'):
             list.append(self.cfg_clear_oldepg)
         list.append(self.cfg_longDescDays)
         if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/AutoTimer/plugin.py"):
@@ -619,8 +621,8 @@ class EPGImportSources(Screen):
 
     def do_reset(self):
         log.write("[EPGImport] create empty epg.db")
-        if os.path.exists("/var/lib/opkg/status"):
-            return
+        # if os.path.exists("/var/lib/opkg/status"):
+            # return
         self.epginstance = eEPGCache.getInstance()
         if os.path.exists(config.misc.epgcache_filename.value):
             os.remove(config.misc.epgcache_filename.value)
@@ -884,7 +886,7 @@ class checkDeepstandby:
     def __init__(self, session, parse=False):
         self.session = session
         if parse:
-            self.FirstwaitCheck = enigma.eTimer()
+            self.FirstwaitCheck = eTimer()
             if os.path.exists("/var/lib/opkg/status"):
                 self.FirstwaitCheck.callback.append(self.runCheckDeepstandby)
             else:
@@ -932,12 +934,12 @@ class AutoStartTimer:
         self.session = session
         self.prev_onlybouquet = config.plugins.epgimport.import_onlybouquet.value
         self.prev_multibouquet = config.usage.multibouquet.value
-        self.timer = enigma.eTimer()
+        self.timer = eTimer()
         if os.path.exists("/var/lib/opkg/status"):
             self.timer.callback.append(self.onTimer)
         else:
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
-        self.pauseAfterFinishImportCheck = enigma.eTimer()
+        self.pauseAfterFinishImportCheck = eTimer()
         if os.path.exists("/var/lib/opkg/status"):
             self.pauseAfterFinishImportCheck.callback.append(self.afterFinishImportCheck)
         else:
@@ -977,7 +979,7 @@ class AutoStartTimer:
             wake = -1
         # log.write("[EPGImport] WakeUpTime now set to %s (now=%s)\n" % (wake, now))
         log.write("[EPGImport] WakeUpTime now set to %s (now=%s)" % (
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(wake)) if wake > 0 else "Invalid",
+            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(wake)) if wake > 0 else "Not Set",
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
         ))
         return wake
@@ -1054,7 +1056,7 @@ class AutoStartTimer:
                                 log.write("[EPGImport] Run to standby after wake up for checking")
                         if not config.plugins.epgimport.deepstandby_afterimport.value:
                             config.plugins.epgimport.deepstandby_afterimport.value = True
-                            self.wait_timer = enigma.eTimer()
+                            self.wait_timer = eTimer()
 #                           self.wait_timer.timeout.get().append(self.startStandby)
                             self.wait_timer_conn = self.wait_timer.timeout.connect(self.startStandby)
                             log.write("[EPGImport] start wait_timer (10sec) for goto standby")

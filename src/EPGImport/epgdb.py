@@ -115,7 +115,7 @@ class epgdb_class:
 			self.start_process()
 		if services is None:
 			# reset event container
-			self.events=[]
+			self.events = []
 		# one local cursor per table seems to perform slightly better ...
 		cursor_service = self.connection.cursor()
 		cursor_event = self.connection.cursor()
