@@ -5,29 +5,31 @@ import os
 import time
 import shutil
 
-MEDIA = ("/media/hdd/", "/media/usb/", "/media/mmc/", "/media/cf/", "/tmp")
+
+def getMountPoints():
+	mount_points = []
+	with open('/proc/mounts', 'r') as mounts:
+		for line in mounts:
+			parts = line.split()
+			mount_point = parts[1]
+			if os.path.ismount(mount_point):
+				mount_points.append(mount_point)
+	return mount_points
 
 
-def findEpg():
-	candidates = []
-	for path in MEDIA:
-		try:
-			if os.path.exists(path):
-				for fn in os.listdir(path):
-					if "epg.dat" in fn:
-						ffn = os.path.join(path, fn)
-						candidates.append((os.path.getctime(ffn), ffn))
-		except:
-			pass  # ignore errors.
-	if not candidates:
-		return None
-	candidates.sort()  # order by ctime...
-	# best candidate is most recent filename.
-	return candidates[-1][1]
+mount_points = getMountPoints()
+mount_point = None
+
+
+for mp in mount_points:
+	epg_path = os.path.join(mp, 'epg.dat')
+	if os.path.exists(epg_path):
+		mount_point = epg_path
+		break
 
 
 def checkCrashLog():
-	for path in MEDIA[:-1]:
+	for path in mount_points[:-1]:
 		try:
 			dirList = os.listdir(path)
 			for fname in dirList:
@@ -52,26 +54,28 @@ def checkCrashLog():
 
 
 def findNewEpg():
-	for path in MEDIA:
-		fn = os.path.join(path, 'epg_new.dat')
-		if os.path.exists(fn):
-			return fn
+	for mp in mount_points:
+		newepg_path = os.path.join(mp, 'epg_new.dat')
+		if os.path.exists(newepg_path):
+			return newepg_path
+	return None
 
 
-epg = findEpg()
+epg = mount_point or '/etc/enigma2/epg.dat'
 newepg = findNewEpg()
-
 print("Epg.dat found at : ", epg)
 print("newepg  found at : ", newepg)
 
-# #Delete epg.dat if last crash was because of error in epg.dat
+
+# Delete epg.dat if last crash was because of error in epg.dat
 if checkCrashLog():
 	try:
 		os.unlink(epg)
 	except:
 		print("delete error")
 
-# #if excists cp epg_new.dat epg.dat
+
+# if excists cp epg_new.dat epg.dat
 if newepg:
 	if epg:
 		print("replacing epg.dat with newmade version")
