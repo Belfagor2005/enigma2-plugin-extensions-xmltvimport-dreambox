@@ -190,8 +190,8 @@ def getBouquetChannelList():
 
 
 def channelFilter(ref):
-    # if not ref:
-        # return False
+    if not ref:
+        return False
     # ignore non IPTV
     if config.plugins.epgimport.import_onlyiptv.value and ("%3a//" not in ref.lower() or ref.startswith("1")):
         return False
@@ -293,7 +293,10 @@ class EPGImportConfig(ConfigListScreen, Screen):
         self["key_green"] = Button(_("Save"))
         self["key_yellow"] = Button(_("Manual"))
         self["key_blue"] = Button(_("Sources"))
-        self["setupActions"] = ActionMap(["SetupActions", "ColorActions", "TimerEditActions", "MovieSelectionActions"],
+        self["setupActions"] = ActionMap(["SetupActions",
+                                          "ColorActions",
+                                          "TimerEditActions",
+                                          "MovieSelectionActions"],
                                          {"red": self.keyRed,
                                           "green": self.keyGreen,
                                           "yellow": self.doimport,
@@ -621,8 +624,7 @@ class EPGImportSources(Screen):
 
     def do_reset(self):
         log.write("[EPGImport] create empty epg.db")
-        # if os.path.exists("/var/lib/opkg/status"):
-            # return
+
         self.epginstance = eEPGCache.getInstance()
         if os.path.exists(config.misc.epgcache_filename.value):
             os.remove(config.misc.epgcache_filename.value)

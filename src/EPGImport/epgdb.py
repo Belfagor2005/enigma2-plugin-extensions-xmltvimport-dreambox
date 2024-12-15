@@ -1,13 +1,26 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import division
 
-import os
+#
+#   epgdb.py for DreamOS epg.db using sqlite
+#
+# (c)   gutemine <gutemine@outlook.at>
+#   https://sourceforge.net/projects/gutemine/
+#
+
+from os import path as os_path, remove as os_remove
 import time
 from enigma import eEPGCache, cachestate
 from ServiceReference import ServiceReference
 from sqlite3 import dbapi2 as sqlite
 from Components.config import config
 from enigma import eTimer
+GREENC = '\033[32m'
+ENDC = '\033[m'
+
+
+# def cprint(text):
+	# print(GREENC+"[EPGDB] " + text + ENDC)
 
 
 class epgdb_class:
@@ -15,7 +28,6 @@ class epgdb_class:
 	EPG_HEADER1_channel_count = 0
 	EPG_TOTAL_EVENTS = 0
 	EXCLUDED_SID = []
-
 	events = []
 
 	def __init__(self, provider_name, provider_priority, epgdb_path=None, clear_oldepg=False):
@@ -33,41 +45,53 @@ class epgdb_class:
 			self.epgdb_path = config.misc.epgcache_filename.value
 		else:
 			self.epgdb_path = epgdb_path
+		self.ProcessingTimer = eTimer()
+		if os_path.exists("/var/lib/dpkg/status"):
+			self.ProcessingTimer_conn = self.ProcessingTimer.timeout.connect(self.start_process)
+		else:
+			self.ProcessingTimer.callback.append(self.start_process)
 		self.connection = None
 		if clear_oldepg:
 			self.create_empty()
+			self.size = os_path.getsize(self.epgdb_path)  # to continue immediately
 			self.start_process()
 		else:
 			self.epginstance = eEPGCache.getInstance()
+			# epg saving will notify when finished ...
 			self.cacheState_conn = self.epginstance.cacheState.connect(self.cacheStateChanged)
 			print("[EPGDB] saving EPG to %s" % self.epgdb_path)
+			if os_path.exists(self.epgdb_path):
+				os_remove(self.epgdb_path)
+			self.size = 0
 			eEPGCache.save(self.epginstance)
 
 	def cacheStateChanged(self, state):
 		if state.state == cachestate.save_finished:
-			print("[EPGDB] epgcache save finished")
-			self.ProcessingTimer = eTimer()
-			if os.path.exists("/var/lib/dpkg/status"):
-				self.ProcessingTimer_conn = self.ProcessingTimer.timeout.connect(self.start_process)
-			else:
-				self.ProcessingTimer.callback.append(self.start_process)
-			self.ProcessingTimer.start(10000, True)
+			print("SAVED")
+			self.ProcessingTimer.start(5000, True)
 			# self.start_process()
 
 	def start_process(self):
-		if os.path.exists(self.epgdb_path):
-			size = os.path.getsize(self.epgdb_path) / 1024
+		print("START PROCESSING")
+		if os_path.exists(self.epgdb_path):
+			size = os_path.getsize(self.epgdb_path)
 			# even empty epg.db has at least 23k size
-			min_size = 23
+			min_size = 23 * 1024
 			if size < min_size:
-				print("[EPGDB] %s too small" % self.epgdb_path)
+				print("%s too small" % self.epgdb_path)
 				return False
+			else:
+				if size != self.size:
+					print("SIZE %d >>> %d changed" % (self.size, size))
+					self.size = size
+					self.ProcessingTimer.start(5000, True)
+					return True
 		else:
-			print("[EPGDB] %s not found" % self.epgdb_path)
+			print("%s NOT FOUND" % self.epgdb_path)
 			return False
-		print("[EPGDB] %s exists" % self.epgdb_path)
+		print("%s SAVE FINISHED SIZE %d" % (self.epgdb_path, self.size))
 		if self.connection is not None:
-			print("[EPGDB] %s already connected" % self.epgdb_path)
+			print("%s CONNECTED ALREADY" % self.epgdb_path)
 			return True
 
 		self.events_in_past_journal = 0
@@ -88,19 +112,19 @@ class epgdb_class:
 			row = self.cursor.fetchone()
 			if row is not None:
 				self.source_id = int(row[0])
-				print("[EPGDB] FOUND %s EPG with source_id %d" % (self.source_name, self.source_id))
+				print("FOUND %s EPG with source_id %d" % (self.source_name, self.source_id))
 			else:   # looks like we have to add it
 				cmd = "insert into T_Source (source_name, priority) values (?, ?)"
 				self.cursor.execute(cmd, (self.source_name, self.priority))
 				self.source_id = self.cursor.lastrowid
 				self.connection.commit()
-				print("[EPGDB] ADDED %s EPG with source_id %d" % (self.source_name, self.source_id))
+				print("ADDED %s EPG with source_id %d" % (self.source_name, self.source_id))
 			# begin transaction  ....
 			self.cursor.execute('BEGIN')
-			print("[EPGDB] connect to %s finished" % self.epgdb_path)
+			print("CONNNECT %s FINISHED" % self.epgdb_path)
 			return True
 		except:
-			print("[EPGDB] connect to %s failed" % self.epgdb_path)
+			print("CONNECT %s FAILED" % self.epgdb_path)
 			return False
 
 	def set_excludedsid(self, exsidlist):
@@ -111,11 +135,14 @@ class epgdb_class:
 
 	def preprocess_events_channel(self, services=None):
 		if self.connection is None:
-			print("[EPGDB] not connected, retrying")
+			print("NOT YET CONNECTED")
+			self.size = os_path.getsize(self.epgdb_path)  # to continue immediately
 			self.start_process()
 		if services is None:
 			# reset event container
 			self.events = []
+			return
+		# print("EVENTS: %d" % len(self.events))
 		# one local cursor per table seems to perform slightly better ...
 		cursor_service = self.connection.cursor()
 		cursor_event = self.connection.cursor()
@@ -129,20 +156,24 @@ class epgdb_class:
 
 		# now we go through all the channels we got
 		for service in services:
+			# prepare and write CHANNEL INFO record
 			channel = ServiceReference(str(service)).getServiceName().encode('ascii', 'ignore')
 			if len(channel) == 0:
 				channel = str(service)
 			ssid = service.split(":")
+			# print("SSID %s" % ssid)
 			number_of_events = len(self.events)
-			if number_of_events > 0:  # and len(ssid) > 6:
+			# only add channels where we have events
+			if number_of_events > 0 and len(ssid) > 6:
 				# convert hex stuff to integer as epg.db likes it to have
 				self.sid = int(ssid[3], 16)
 				self.tsid = int(ssid[4], 16)
 				self.onid = int(ssid[5], 16)
 				self.dvbnamespace = int(ssid[6], 16)
-#               print "[EPGDB] %x %x %x %x" % (self.sid,self.tsid,self.onid,self.dvbnamespace)
+				# print("%x %x %x %x" % (self.sid,self.tsid,self.onid,self.dvbnamespace))
 				# dvb-t fix: EEEExxxx => EEEE0000
 				if self.dvbnamespace > 4008574976 and self.dvbnamespace < 4008636143:
+					# print("FIXING DVB-T")
 					self.dvbnamespace = 4008574976
 				if self.dvbnamespace > 2147483647:
 					self.dvbnamespace -= 4294967296
@@ -153,7 +184,7 @@ class epgdb_class:
 				cursor_service.execute(cmd, (self.sid, self.tsid, self.onid, self.dvbnamespace))
 				row = cursor_service.fetchone()
 				if row is not None:
-					self.service_id = int(row[0])
+					self.service_id=int(row[0])
 				else:
 					cmd = "INSERT INTO T_Service (sid,tsid,onid,dvbnamespace) VALUES(?,?,?,?)"
 					cursor_service.execute(cmd, (self.sid, self.tsid, self.onid, self.dvbnamespace))
@@ -173,6 +204,11 @@ class epgdb_class:
 						self.long_d = event[3]
 					else:
 						self.long_d = event[2]
+					self.extended_d = self.long_d
+					if self.long_d.find("\n\n") is not -1:
+						sp = self.long_d.split("\n\n")
+						self.long_d = sp[0]
+						self.extended_d = sp[1]
 					# extract date and time
 					self.begin_time = int(event[0])
 					self.duration = int(event[1])
@@ -182,9 +218,10 @@ class epgdb_class:
 					# we need hash values for descriptions, hash is provided by enigma
 					self.short_hash = eEPGCache.getStringHash(self.short_d)
 					self.long_hash = eEPGCache.getStringHash(self.long_d)
+					self.extended_hash = eEPGCache.getStringHash(self.extended_d)
 					# generate an unique dvb event id < 65536
-					self.dvb_event_id = (self.begin_time - (self.begin_time / 3932160) * 3932160) / 60
-#                   print "[EPGDB] dvb event id: %d" % self.dvb_event_id
+					self.dvb_event_id = (self.begin_time - int(self.begin_time // 3932160) * 3932160) // 60
+#                   print("dvb event id: %d" % self.dvb_event_id)
 					if self.short_hash > 2147483647:
 						self.short_hash -= 4294967296
 					if self.long_hash > 2147483647:
@@ -194,7 +231,7 @@ class epgdb_class:
 					if self.end_time > self.epoch_time and self.begin_time < self.epg_cutoff_time and self.source_id is not None:
 						cmd = "INSERT INTO T_Event (service_id, begin_time, duration, source_id, dvb_event_id) VALUES(?,?,?,?,?)"
 						cursor_event.execute(cmd, (self.service_id, self.begin_time, self.duration, self.source_id, self.dvb_event_id))
-						self.event_id = cursor_event.lastrowid
+						self.event_id=cursor_event.lastrowid
 						# check if hash already exists on Title
 						cmd = "SELECT id from T_Title WHERE hash=%d" % self.short_hash
 						cursor_title.execute(cmd)
@@ -202,28 +239,28 @@ class epgdb_class:
 						if row is None:
 							cmd = "INSERT INTO T_Title (hash, title) VALUES(?,?)"
 							cursor_title.execute(cmd, (self.short_hash, self.short_d))
-							self.title_id = cursor_title.lastrowid
+							self.title_id=cursor_title.lastrowid
 						else:
-							self.title_id = int(row[0])
-						cmd = "SELECT id from T_Short_Description WHERE hash=%d" % self.short_hash
+							self.title_id=int(row[0])
+						cmd = "SELECT id from T_Short_Description WHERE hash=%d" % self.long_hash
 						cursor_short_desc.execute(cmd)
 						row = cursor_short_desc.fetchone()
 						if row is None:
 							cmd = "INSERT INTO T_Short_Description (hash, short_description) VALUES(?,?)"
-							cursor_short_desc.execute(cmd, (self.short_hash, self.short_d))
+							cursor_short_desc.execute(cmd, (self.long_hash, self.long_d))
 							self.short_description_id = cursor_short_desc.lastrowid
 						else:
-							self.short_description_id = int(row[0])
+							self.short_description_id=int(row[0])
 						# check if hash already exists for Extended Description
-						cmd = "SELECT id from T_Extended_Description WHERE hash=%d" % self.long_hash
+						cmd = "SELECT id from T_Extended_Description WHERE hash=%d" % self.extended_hash
 						cursor_extended_desc.execute(cmd)
 						row = cursor_extended_desc.fetchone()
 						if row is None:
 							cmd = "INSERT INTO T_Extended_Description (hash, extended_description) VALUES(?,?)"
-							cursor_extended_desc.execute(cmd, (self.long_hash, self.long_d))
-							self.extended_description_id = cursor_extended_desc.lastrowid
+							cursor_extended_desc.execute(cmd, (self.extended_hash, self.extended_d))
+							self.extended_description_id=cursor_extended_desc.lastrowid
 						else:
-							self.extended_description_id = int(row[0])
+							self.extended_description_id=int(row[0])
 						cmd = "INSERT INTO T_Data (event_id, title_id, short_description_id, extended_description_id, iso_639_language_code) VALUES(?,?,?,?,?)"
 						cursor_data.execute(cmd, (self.event_id, self.title_id, self.short_description_id, self.extended_description_id, self.language))
 						# increase journaling counters
@@ -232,7 +269,7 @@ class epgdb_class:
 					else:
 						self.events_in_past_journal += 1
 
-			print("[EPGDB] added %d from %d events for channel %s %s" % (self.event_counter_journal, number_of_events, channel, str(service)))
+			print("ADDED %d from %d events for channel %s" % (self.event_counter_journal, number_of_events, channel))
 			self.EPG_TOTAL_EVENTS += number_of_events
 
 		# reset event container
@@ -246,9 +283,9 @@ class epgdb_class:
 
 	def cancel_process(self):
 		if self.connection is None:
-			print("[EPGDB] still not connected, sorry")
+			print("STILL NOT CONNECTED, sorry")
 			return
-		print("[EPGDB] Importing cancelled")
+		print("IMPORT CANCELED")
 		self.cursor.execute('END')
 		self.cursor.close()
 		self.connection.close()
@@ -256,10 +293,10 @@ class epgdb_class:
 
 	def final_process(self):
 		if self.connection is None:
-			print("[EPGDB] still not connected, sorry")
+			print("STILL NOT CONNECTED, sorry")
 			return
-		print("[EPGDB] Importing finished. From the total available %d events %d events were imported." % (self.EPG_TOTAL_EVENTS, self.events_in_import_range_journal))
-		print("[EPGDB] %d Events were outside of the defined timespan(%d hours outdated and timespan %d days)." % (self.events_in_past_journal, self.epg_outdated, self.epg_timespan))
+		print("IMPORT FINISHED and from the total available %d events %d were imported." % (self.EPG_TOTAL_EVENTS, self.events_in_import_range_journal))
+		print("%d Events were outside of the defined timespan(%d hours outdated and timespan %d days)." % (self.events_in_past_journal, self.epg_outdated, self.epg_timespan))
 		try:
 			self.cursor.execute('END')
 		except:
@@ -270,14 +307,14 @@ class epgdb_class:
 		except:
 			pass
 		self.connection = None
-		print("[EPGDB] now writes the epg database ...")
+		print("WRITES EPG database ...")
 		epginstance = eEPGCache.getInstance()
 		eEPGCache.load(epginstance)
 
 	def create_empty(self):
-		print("[EPGDB] create empty epg.db")
-		if os.path.exists(config.misc.epgcache_filename.value):
-			os.remove(config.misc.epgcache_filename.value)
+		print("EMPTY EPG database")
+		if os_path.exists(config.misc.epgcache_filename.value):
+			os_remove(config.misc.epgcache_filename.value)
 		connection = sqlite.connect(config.misc.epgcache_filename.value, timeout=10)
 		connection.text_factory = str
 		cursor = connection.cursor()
@@ -309,3 +346,23 @@ class epgdb_class:
 		connection.commit()
 		cursor.close()
 		connection.close()
+
+	def check_epgdb(self):
+		print("CHECKS EPG database")
+		text_result = ""
+		connection = sqlite.connect(config.misc.epgcache_filename.value, timeout=10)
+		connection.text_factory = str
+		cursor = connection.cursor()
+		cmd = "PRAGMA quick_check"
+		try:
+			cursor.execute(cmd)
+			result = cursor.fetchall()
+			text_result = ""
+			for res in result:
+				text_result = text_result + str(res[0])
+		except MySQLdb.Error as e:
+			text_result = "[EPGDB] Error [%d]: %s" % (e.args[0], e.args[1])
+		cursor.close()
+		connection.close()
+		print("CHECK RESULT %s" % text_result)
+		return text_result

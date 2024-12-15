@@ -7,6 +7,7 @@
 #
 from __future__ import absolute_import
 from __future__ import print_function
+from datetime import datetime
 from socket import getaddrinfo, AF_INET6, has_ipv6
 from sys import version_info
 from twisted import version
@@ -18,7 +19,6 @@ import random
 import sys
 import time
 import twisted.python.runtime
-from datetime import datetime
 
 try:
 	pythonVer = sys.version_info.major
@@ -44,17 +44,17 @@ PARSERS = {'xmltv': 'gen_xmltv', 'genxmltv': 'gen_xmltv'}
 
 
 def getMountPoints():
-    mount_points = []
-    try:
-        with open('/proc/mounts', 'r') as mounts:
-            for line in mounts:
-                parts = line.split()
-                mount_point = parts[1]
-                if os.path.ismount(mount_point) and os.access(mount_point, os.W_OK):
-                    mount_points.append(mount_point)
-    except Exception as e:
-        print("[EPGImport] Errore durante la lettura di /proc/mounts:", e)
-    return mount_points
+	mount_points = []
+	try:
+		with open('/proc/mounts', 'r') as mounts:
+			for line in mounts:
+				parts = line.split()
+				mount_point = parts[1]
+				if os.path.ismount(mount_point) and os.access(mount_point, os.W_OK):
+					mount_points.append(mount_point)
+	except Exception as e:
+		print("[EPGImport] Errore durante la lettura di /proc/mounts:", e)
+	return mount_points
 
 
 mount_points = getMountPoints()
@@ -98,7 +98,6 @@ def relImport(name):
 	mod = __import__('.'.join(fullname))
 	for n in fullname[1:]:
 		mod = getattr(mod, n)
-
 	return mod
 
 
@@ -115,28 +114,14 @@ def getTimeFromHourAndMinutes(hour, minute):
 
 
 def bigStorage(minFree, default, *candidates):
-	"""
-	Restituisce il percorso di storage con spazio libero sufficiente.
-
-	Args:
-		minFree (int): Lo spazio minimo libero richiesto in byte.
-		default (str): Il percorso predefinito.
-		candidates (*args): Percorsi opzionali da verificare.
-
-	Returns:
-		str: Il percorso che soddisfa i requisiti o il percorso predefinito.
-	"""
 	try:
-		# Controlla se il percorso predefinito soddisfa i requisiti.
 		diskstat = os.statvfs(default)
 		free = diskstat.f_bfree * diskstat.f_bsize
-		if free > minFree and free > 25000000:  # Almeno 25 MB di spazio libero.
+		if (free > minFree) and (free > 50000000):
 			return default
 	except Exception as e:
 		print("[bigStorage] Impossibile ottenere informazioni su %s: %s" % (default, e))
-	# Ottieni tutti i mount points.
 	all_mount_points = getMountPoints()
-	# Verifica i candidati tra i mount points validi.
 	for candidate in candidates:
 		if candidate in all_mount_points:
 			try:
@@ -147,30 +132,6 @@ def bigStorage(minFree, default, *candidates):
 			except Exception as e:
 				print("[bigStorage] Impossibile ottenere informazioni su %s: %s" % (candidate, e))
 	return default
-
-# def bigStorage(minFree, default, *candidates):
-	# try:
-		# diskstat = os.statvfs(default)
-		# free = diskstat.f_bfree * diskstat.f_bsize
-		# if free > minFree and free > 25000000:
-			# return default
-	# except Exception as e:
-		# print("[EPGImport] Failed to stat %s: %s" % (default, e))
-
-	# mounts = open('/proc/mounts', 'rb').readlines()
-	# # format: device mountpoint fstype options #
-	# mountpoints = [x.split(' ', 2)[1] for x in mounts]
-	# for candidate in candidates:
-		# if candidate in mountpoints:
-			# try:
-				# diskstat = os.statvfs(candidate)
-				# free = diskstat.f_bfree * diskstat.f_bsize
-				# if free > minFree:
-					# return candidate
-			# except:
-				# pass
-
-	# return default
 
 
 class OudeisImporter(object):
@@ -188,7 +149,8 @@ class OudeisImporter(object):
 
 
 def unlink_if_exists(filename):
-	# if filename.endswith("epg.db"):
+	if filename.endswith("epg.db"):
+		return
 	try:
 		os.unlink(filename)
 	except Exception as e:
@@ -210,7 +172,6 @@ class EPGImport(object):
 		self.onDone = None
 		self.epgcache = epgcache
 		self.channelFilter = channelFilter
-		# return
 
 	def checkValidServer(self, serverurl):
 		dirname, filename = os.path.split(serverurl)
@@ -294,7 +255,6 @@ class EPGImport(object):
 		elif hasattr(self.epgcache, 'importEvent'):
 			self.storage = OudeisImporter(self.epgcache)
 			self.saveEPGCache()
-			return
 		else:
 			print('[EPGImport] oudeis patch not detected, using epg.dat instead.')
 			from . import epgdat_importer
@@ -306,7 +266,6 @@ class EPGImport(object):
 		else:
 			self.longDescUntil = longDescUntil
 		self.nextImport()
-		return
 
 	def nextImport(self):
 		self.closeReader()
@@ -322,7 +281,6 @@ class EPGImport(object):
 			self.do_download(filename, self.afterDownload, self.downloadFail)
 		else:
 			self.afterDownload(None, filename, deleteFile=False)
-		return
 
 	def createIterator(self, filename):
 		self.source.channels.update(self.channelFilter, filename)
@@ -356,13 +314,14 @@ class EPGImport(object):
 		print("[EPGImport] afterDownload", filename)
 		try:
 			if not os.path.getsize(filename):
-				raise Exception("File is empty")
+				print("File is empty")
 		except Exception as e:
 			self.downloadFail(e)
 			return
 
 		if self.source.parser == 'epg.dat':
-			if twisted.python.runtime.platform.supportsThreads():
+			# if twisted.python.runtime.platform.supportsThreads():
+			if False:
 				print("[EPGImport] Using twisted thread for DAT file")
 				threads.deferToThread(self.readEpgDatFile, filename, deleteFile).addCallback(lambda ignore: self.nextImport())
 			else:
@@ -390,6 +349,7 @@ class EPGImport(object):
 				# read a bit to make sure it's an xz file
 				self.fd.read(10)
 				self.fd.seek(0, 0)
+
 			except Exception as e:
 				print("[EPGImport] File downloaded is not a valid xz file %s" % filename)
 				self.downloadFail(e)
@@ -412,14 +372,14 @@ class EPGImport(object):
 			filename = random.choice(self.channelFiles)
 			self.channelFiles.remove(filename)
 			self.do_download(filename, self.afterChannelDownload, self.channelDownloadFail)
-		return
+		# return
 
 	def afterChannelDownload(self, result, filename, deleteFile=True):
 		print("[EPGImport] afterChannelDownload", filename)
 		if filename:
 			try:
 				if not os.path.getsize(filename):
-					raise Exception("File is empty")
+					print("File is empty")
 			except Exception as e:
 				self.channelDownloadFail(e)
 				return
@@ -483,14 +443,8 @@ class EPGImport(object):
 					self.storage.importEvents(r, (d,))
 				except Exception as e:
 					print("[EPGImport] importEvents exception:", e)
-
 		except StopIteration:
 			self.nextImport()
-		except Exception as e:
-			# Catch any unexpected exceptions to prevent crashes.
-			print("[EPGImport] Unexpected exception in doRead:", e)
-
-		return
 
 	def connectionLost(self, failure):
 		"""called from reactor on lost connection"""
@@ -526,7 +480,6 @@ class EPGImport(object):
 			self.fd.close()
 			self.fd = None
 			self.iterator = None
-		# return
 
 	def closeImport(self):
 		self.closeReader()
@@ -563,7 +516,6 @@ class EPGImport(object):
 				self.onDone(reboot=reboot, epgfile=needLoad)
 		self.eventCount = None
 		print("[EPGImport] #### Finished ####")
-		return
 
 	def isImportRunning(self):
 		return self.source is not None

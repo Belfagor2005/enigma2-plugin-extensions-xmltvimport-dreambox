@@ -1,24 +1,19 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import time
 import calendar
-import log
+from . import log
 from xml.etree.cElementTree import iterparse
 
 
 try:
-    basestring
+	basestring
 except NameError:
-    basestring = str
-
+	basestring = str
 
 # %Y%m%d%H%M%S
 
 
 def quickptime(str):
-	return time.struct_time((int(str[0:4]), int(str[4:6]), int(str[6:8]),
-							 int(str[8:10]), int(str[10:12]), 0, -1, -1, 0))
+	return time.struct_time((int(str[0:4]), int(str[4:6]), int(str[6:8]), int(str[8:10]), int(str[10:12]), 0, -1, -1, 0))
 
 
 def get_time_utc(timestring, fdateparse):
@@ -33,7 +28,6 @@ def get_time_utc(timestring, fdateparse):
 	except Exception as e:
 		print("[XMLTVConverter] get_time_utc error:", e)
 		return 0
-
 
 # Preferred language should be configurable, but for now,
 # we just like Dutch better!
@@ -132,10 +126,12 @@ def get_xml_language(elem, name):
 					r = 'tur'
 				elif lang == 'uk':
 					r = 'ukr'
+				#
 				# continue list here ...
+				#
 				else:
 					print("[XMLTVConverter] unmapped language:", lang)
-					# r = lang
+#                   r = lang
 					r = 'eng'
 	except Exception as e:
 		print("[XMLTVConverter] get_xml_string error:",  e)
@@ -173,7 +169,7 @@ class XMLTVConverter:
 			channel = channel.lower()
 			if channel not in self.channels:
 				if lastUnknown != channel:
-					log.write("Unknown channel: %s" % channel)
+					log.write("[XMLTVCONVERTER] Unknown channel:  '%s'" % channel)
 					lastUnknown = channel
 				# return a None object to give up time to the reactor.
 				yield None
