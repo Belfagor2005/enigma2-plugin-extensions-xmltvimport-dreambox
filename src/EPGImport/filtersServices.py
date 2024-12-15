@@ -117,13 +117,13 @@ filtersServicesList = FiltersList()
 
 
 class filtersServicesSetup(Screen):
-    if sz_w == 1920:
+    if sz_w >= 1920:
         skin = """
-        <screen name="filtersServicesSetup" position="center,170" size="1200,820" title="Ignore services list">
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+        <screen name="filtersServicesSetup" position="center,center" size="1200,820" title="Ignore services list">
+            <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
+            <ePixmap pixmap="skin_default/buttons/green.png" position="305,5" size="295,70" />
+            <ePixmap pixmap="skin_default/buttons/yellow.png" position="600,5" size="295,70" />
+            <ePixmap pixmap="skin_default/buttons/blue.png" position="895,5" size="295,70" />
             <widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_red" transparent="1" valign="center" zPosition="1" />
             <widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_green" transparent="1" valign="center" zPosition="1" />
             <widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_yellow" transparent="1" valign="center" zPosition="1" />
@@ -144,7 +144,7 @@ class filtersServicesSetup(Screen):
         </screen>"""
     else:
         skin = """
-        <screen name="filtersServicesSetup" position="center,120" size="820,520" title="Ignore services list">
+        <screen name="filtersServicesSetup" position="center,center" size="820,520" title="Ignore services list">
             <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,50" scale="stretch"/>
             <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,50" scale="stretch"/>
             <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,50" scale="stretch"/>
@@ -260,13 +260,13 @@ class filtersServicesSetup(Screen):
 
 
 class filtersServicesSelection(ChannelSelectionBase):
-    if sz_w == 1920:
+    if sz_w >= 1920:
         skin = """
-        <screen position="center,170" size="1200,820" title="Channel Selection">
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+        <screen position="center,center" size="1200,820" title="Channel Selection">
+        <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
+        <ePixmap pixmap="skin_default/buttons/green.png" position="305,5" size="295,70" />
+        <ePixmap pixmap="skin_default/buttons/yellow.png" position="600,5" size="295,70" />
+        <ePixmap pixmap="skin_default/buttons/blue.png" position="895,5" size="295,70" />
         <widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_red" transparent="1" valign="center" zPosition="1" />
         <widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_green" transparent="1" valign="center" zPosition="1" />
         <widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_yellow" transparent="1" valign="center" zPosition="1" />
@@ -277,7 +277,7 @@ class filtersServicesSelection(ChannelSelectionBase):
         """
     else:
         skin = """
-        <screen position="center,120" size="820,520" title="Channel Selection">
+        <screen position="center,center" size="820,520" title="Channel Selection">
         <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
         <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
         <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40"/>

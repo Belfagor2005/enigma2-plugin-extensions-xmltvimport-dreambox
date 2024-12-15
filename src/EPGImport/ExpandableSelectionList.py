@@ -11,7 +11,7 @@ import os
 
 FHD = False
 
-if getDesktop(0).size().width() == 1920:
+if getDesktop(0).size().width() >= 1920:
 	FHD = True
 
 
@@ -112,10 +112,10 @@ class ExpandableSelectionList(MenuList):
 		'tree is expected to be a list of categories'
 		MenuList.__init__(self, [], enableWrapAround, content=eListboxPythonMultiContent)
 		if os.path.exists("/var/lib/opkg/status"):
-			font = skin.fonts.get("SelectionList", ("Regular", 24, 32))
+			font = skin.fonts.get("SelectionList", ("Regular", 24, 34))
 		else:
 			if FHD:
-				font = ("Regular", 34, 50)
+				font = ("Regular", 36, 50)
 			else:
 				font = ("Regular", 24, 30)
 		self.l.setFont(0, gFont(font[0], font[1]))

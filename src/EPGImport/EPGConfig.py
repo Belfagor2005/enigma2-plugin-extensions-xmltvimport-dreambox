@@ -9,9 +9,9 @@ import time
 import random
 
 from . import log
+
 # User selection stored here, so it goes into a user settings backup
 SETTINGS_FILE = '/etc/enigma2/epgimport.conf'
-
 channelCache = {}
 
 

@@ -1,13 +1,6 @@
 from __future__ import print_function
 from __future__ import division
 
-#
-#   epgdb.py for DreamOS epg.db using sqlite
-#
-# (c)   gutemine <gutemine@outlook.at>
-#   https://sourceforge.net/projects/gutemine/
-#
-
 from os import path as os_path, remove as os_remove
 import time
 from enigma import eEPGCache, cachestate
@@ -15,12 +8,12 @@ from ServiceReference import ServiceReference
 from sqlite3 import dbapi2 as sqlite
 from Components.config import config
 from enigma import eTimer
+'''
 GREENC = '\033[32m'
 ENDC = '\033[m'
-
-
-# def cprint(text):
-	# print(GREENC+"[EPGDB] " + text + ENDC)
+def cprint(text):
+	print(GREENC+"[EPGDB] " + text + ENDC)
+'''
 
 
 class epgdb_class:
@@ -184,7 +177,7 @@ class epgdb_class:
 				cursor_service.execute(cmd, (self.sid, self.tsid, self.onid, self.dvbnamespace))
 				row = cursor_service.fetchone()
 				if row is not None:
-					self.service_id=int(row[0])
+					self.service_id = int(row[0])
 				else:
 					cmd = "INSERT INTO T_Service (sid,tsid,onid,dvbnamespace) VALUES(?,?,?,?)"
 					cursor_service.execute(cmd, (self.sid, self.tsid, self.onid, self.dvbnamespace))
@@ -231,7 +224,7 @@ class epgdb_class:
 					if self.end_time > self.epoch_time and self.begin_time < self.epg_cutoff_time and self.source_id is not None:
 						cmd = "INSERT INTO T_Event (service_id, begin_time, duration, source_id, dvb_event_id) VALUES(?,?,?,?,?)"
 						cursor_event.execute(cmd, (self.service_id, self.begin_time, self.duration, self.source_id, self.dvb_event_id))
-						self.event_id=cursor_event.lastrowid
+						self.event_id = cursor_event.lastrowid
 						# check if hash already exists on Title
 						cmd = "SELECT id from T_Title WHERE hash=%d" % self.short_hash
 						cursor_title.execute(cmd)
@@ -239,9 +232,9 @@ class epgdb_class:
 						if row is None:
 							cmd = "INSERT INTO T_Title (hash, title) VALUES(?,?)"
 							cursor_title.execute(cmd, (self.short_hash, self.short_d))
-							self.title_id=cursor_title.lastrowid
+							self.title_id = cursor_title.lastrowid
 						else:
-							self.title_id=int(row[0])
+							self.title_id = int(row[0])
 						cmd = "SELECT id from T_Short_Description WHERE hash=%d" % self.long_hash
 						cursor_short_desc.execute(cmd)
 						row = cursor_short_desc.fetchone()
@@ -250,7 +243,7 @@ class epgdb_class:
 							cursor_short_desc.execute(cmd, (self.long_hash, self.long_d))
 							self.short_description_id = cursor_short_desc.lastrowid
 						else:
-							self.short_description_id=int(row[0])
+							self.short_description_id = int(row[0])
 						# check if hash already exists for Extended Description
 						cmd = "SELECT id from T_Extended_Description WHERE hash=%d" % self.extended_hash
 						cursor_extended_desc.execute(cmd)
@@ -258,9 +251,9 @@ class epgdb_class:
 						if row is None:
 							cmd = "INSERT INTO T_Extended_Description (hash, extended_description) VALUES(?,?)"
 							cursor_extended_desc.execute(cmd, (self.extended_hash, self.extended_d))
-							self.extended_description_id=cursor_extended_desc.lastrowid
+							self.extended_description_id = cursor_extended_desc.lastrowid
 						else:
-							self.extended_description_id=int(row[0])
+							self.extended_description_id = int(row[0])
 						cmd = "INSERT INTO T_Data (event_id, title_id, short_description_id, extended_description_id, iso_639_language_code) VALUES(?,?,?,?,?)"
 						cursor_data.execute(cmd, (self.event_id, self.title_id, self.short_description_id, self.extended_description_id, self.language))
 						# increase journaling counters

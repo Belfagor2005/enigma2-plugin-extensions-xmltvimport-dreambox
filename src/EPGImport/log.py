@@ -19,7 +19,8 @@ def write(data):
 	try:
 		if logfile.tell() > 1000000:
 			logfile.reset()
-		logfile.write(data)
+		logfile.write(data + '\n')
+		# logfile.write('\n')
 	finally:
 		mutex.release()
 	sys.stdout.write(data)

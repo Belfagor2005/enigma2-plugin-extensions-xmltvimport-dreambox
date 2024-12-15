@@ -17,10 +17,13 @@ EPGImport.HDD_EPG_DAT = "./epg.dat.new"
 
 # Emulate an Enigma that has no patch whatsoever.
 class FakeEnigma:
+
 	def getInstance(self):
 		return self
+
 	# def load(self):
 		# print "...load..."
+
 	# def importEvents(self, *args):
 		# print args
 

@@ -243,13 +243,13 @@ sz_w = getDesktop(0).size().width()
 
 
 class EPGImportConfig(ConfigListScreen, Screen):
-    if sz_w == 1920:
+    if sz_w >= 1920:
         skin = """
-            <screen position="center,170" size="1200,820" title="EPG Import Configuration">
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+            <screen position="center,center" size="1200,820" title="EPG Import Configuration">
+                <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/green.png" position="305,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/yellow.png" position="600,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/blue.png" position="895,5" size="295,70" />
                 <widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="key_red" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#a08500" font="Regular;30" halign="center" name="key_yellow" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
@@ -259,12 +259,12 @@ class EPGImportConfig(ConfigListScreen, Screen):
                 <eLabel backgroundColor="grey" position="10,730" size="1180,1" />
                 <widget font="Regular;32" halign="center" name="status" position="110,667" size="980,75" valign="center" />
                 <widget font="Regular;32" halign="center" name="statusbar" position="110,735" size="980,75" valign="center" />
-                <ePixmap pixmap="Default-FHD/skin_default/icons/info.svg" position="10,770" size="80,40" />
-                <ePixmap pixmap="Default-FHD/skin_default/icons/menu.svg" position="1110,770" size="80,40" />
+                <ePixmap pixmap="skin_default/icons/info.png" position="10,770" size="80,40" />
+                <ePixmap pixmap="skin_default/icons/menu.png" position="1110,770" size="80,40" />
             </screen>"""
     else:
         skin = """
-            <screen position="center,120" size="820,520" title="EPG Import Configuration">
+            <screen position="center,center" size="820,520" title="EPG Import Configuration">
                 <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
@@ -520,18 +520,18 @@ class EPGImportConfig(ConfigListScreen, Screen):
         self.session.open(filtersServices.filtersServicesSetup)
 
     def showLog(self):
-        self.session.open(EPGImportLog)
+        self.session.open(EPGImportLogx)
 
 
 class EPGImportSources(Screen):
     "Pick sources from config"
-    if sz_w == 1920:
+    if sz_w >= 1920:
         skin = """
-            <screen position="center,170" size="1200,820" title="EPG Import Sources" >
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+            <screen position="center,center" size="1200,820" title="EPG Import Sources" >
+                <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/green.png" position="305,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/yellow.png" position="600,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/blue.png" position="895,5" size="295,70" />
                 <widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="key_red" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#a08500" font="Regular;30" halign="center" name="key_yellow" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
@@ -541,7 +541,7 @@ class EPGImportSources(Screen):
             </screen>"""
     else:
         skin = """
-            <screen position="center,120" size="820,520" title="EPG Import Sources" >
+            <screen position="center,center" size="820,520" title="EPG Import Sources" >
                 <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
@@ -624,7 +624,6 @@ class EPGImportSources(Screen):
 
     def do_reset(self):
         log.write("[EPGImport] create empty epg.db")
-
         self.epginstance = eEPGCache.getInstance()
         if os.path.exists(config.misc.epgcache_filename.value):
             os.remove(config.misc.epgcache_filename.value)
@@ -665,11 +664,11 @@ class EPGImportSources(Screen):
 
 
 class EPGImportProfile(ConfigListScreen, Screen):
-    if sz_w == 1920:
+    if sz_w >= 1920:
         skin = """
-        <screen position="center,170" size="1200,820" title="EPGImportProfile" >
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
-            <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />
+        <screen position="center,center" size="1200,820" title="EPGImportProfile" >
+            <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="300,70" />
+            <ePixmap pixmap="skin_default/buttons/green.png" position="310,5" size="300,70" />
             <widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="key_red" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
             <widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="310,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
             <widget font="Regular;34" halign="right" position="1050,25" render="Label" size="120,40" source="global.CurrentTime">
@@ -683,7 +682,7 @@ class EPGImportProfile(ConfigListScreen, Screen):
         </screen>"""
     else:
         skin = """
-        <screen position="center,120" size="820,520" title="EPGImportProfile" >
+        <screen position="center,center" size="820,520" title="EPGImportProfile" >
             <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
             <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
             <widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
@@ -732,24 +731,25 @@ class EPGImportProfile(ConfigListScreen, Screen):
         self.close()
 
 
-class EPGImportLog(Screen):
-    if sz_w == 1920:
+class EPGImportLogx(Screen):
+    if sz_w >= 1920:
         skin = """
-            <screen position="center,170" size="1200,820" title="EPG Import Log"  >
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
-                <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+            <screen position="center,center" size="1200,820" title="EPG Import Log"  >
+                <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/green.png" position="305,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/yellow.png" position="600,5" size="295,70" />
+                <ePixmap pixmap="skin_default/buttons/blue.png" position="895,5" size="295,70" />
                 <widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="key_red" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#a08500" font="Regular;30" halign="center" name="key_yellow" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <widget backgroundColor="#18188b" font="Regular;30" halign="center" name="key_blue" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
                 <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-                <widget font="Regular;28" name="list" position="10,90" size="1180,720" />
+                <!--  <widget name="list" position="10,90" size="1180,720" /> -->
+                <widget font="Regular;34" name="list" position="10,90" size="1180,720" halign="left" valign="top" />
             </screen>"""
     else:
         skin = """
-            <screen position="center,120" size="820,520" title="EPG Import Log" >
+            <screen position="center,center" size="820,520" title="EPG Import Log" >
                 <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
                 <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
@@ -759,17 +759,25 @@ class EPGImportLog(Screen):
                 <widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColor="white" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
                 <widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColor="white" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
                 <eLabel position="10,50" size="800,1" backgroundColor="grey" />
-                <widget font="Regular;20" name="list" position="10,60" size="800,450" />
+                <widget name="list" position="10,60" size="800,450" font="Regular;22"/>
             </screen>"""
 
     def __init__(self, session):
         self.session = session
         Screen.__init__(self, session)
+        print('skin=\n', EPGImportLogx.skin)
+        self.log = log
         self["key_red"] = Button(_("Clear"))
         self["key_green"] = Button()
         self["key_yellow"] = Button()
         self["key_blue"] = Button(_("Save"))
-        self["list"] = ScrollLabel(log.getvalue())
+        # # crash on scrolllabel
+        # self["list"] = ScrollLabel("")
+        # self["list"].setText(self.log.getvalue())
+        self.text_lines = self.log.getvalue().splitlines()
+        self.current_line = 0
+        self["list"] = Label("")
+        self.updateText()
         self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"],
                                     {"red": self.clear,
                                      "green": self.cancel,
@@ -778,24 +786,40 @@ class EPGImportLog(Screen):
                                      "blue": self.save,
                                      "cancel": self.cancel,
                                      "ok": self.cancel,
-                                     "left": self["list"].pageUp,
-                                     "right": self["list"].pageDown,
-                                     "up": self["list"].pageUp,
-                                     "down": self["list"].pageDown,
-                                     "pageUp": self["list"].pageUp,
-                                     "pageDown": self["list"].pageDown,
+                                     "left": self.scrollUp,
+                                     "right": self.scrollDown,
+                                     "up": self.scrollUp,
+                                     "down": self.scrollDown,
+                                     "pageUp": self.scrollUp,
+                                     "pageDown": self.scrollDown,
                                      "menu": self.cancel}, -2)
         self.onLayoutFinish.append(self.setCustomTitle)
 
     def setCustomTitle(self):
         self.setTitle(_("EPG Import Log"))
 
+    def updateText(self):
+        """Aggiorna il testo mostrato nel `Label` basandosi sulla riga corrente."""
+        visible_lines = self.text_lines[self.current_line:self.current_line + 20]  # Mostra 20 righe alla volta
+        self["list"].setText("\n".join(visible_lines))
+
+    def scrollUp(self):
+        """Scorri il testo verso l'alto."""
+        if self.current_line > 0:
+            self.current_line -= 1
+            self.updateText()
+
+    def scrollDown(self):
+        """Scorri il testo verso il basso."""
+        if self.current_line + 20 < len(self.text_lines):
+            self.current_line += 1
+            self.updateText()
+
     def save(self):
         try:
-            f = open('/tmp/epgimport.log', 'w')
-            f.write(log.getvalue())
+            with open('/tmp/epgimport.log', 'w') as f:
+                f.write(self.log.getvalue())
             self.session.open(MessageBox, _("Write to /tmp/epgimport.log"), MessageBox.TYPE_INFO, timeout=5, close_on_any_key=True)
-            f.close()
         except Exception as e:
             self["list"].setText("Failed to write /tmp/epgimport.log:str" + str(e))
         self.close(True)
@@ -804,8 +828,8 @@ class EPGImportLog(Screen):
         self.close(False)
 
     def clear(self):
-        log.logfile.reset()
-        log.logfile.truncate()
+        self.log.logfile.reset()
+        self.log.logfile.truncate()
         self.close(False)
 
 
@@ -839,7 +863,7 @@ def main_menu(menuid, **kwargs):
 
 
 def doneConfiguring(session, retval):
-    "user has closed configuration, check new values...."
+    '''user has closed configuration, check new values....'''
     if autoStartTimer is not None:
         autoStartTimer.update()
 
@@ -888,12 +912,14 @@ class checkDeepstandby:
     def __init__(self, session, parse=False):
         self.session = session
         if parse:
+
             self.FirstwaitCheck = eTimer()
             if os.path.exists("/var/lib/opkg/status"):
                 self.FirstwaitCheck.callback.append(self.runCheckDeepstandby)
             else:
                 self.FirstwaitCheck_conn = self.FirstwaitCheck.timeout.connect(self.runCheckDeepstandby)
             self.FirstwaitCheck.startLongTimer(600)
+
             log.write("[EPGImport] Wait for parse autotimers 30 sec.")
         else:
             self.runCheckDeepstandby()
@@ -936,17 +962,20 @@ class AutoStartTimer:
         self.session = session
         self.prev_onlybouquet = config.plugins.epgimport.import_onlybouquet.value
         self.prev_multibouquet = config.usage.multibouquet.value
+
         self.timer = eTimer()
         if os.path.exists("/var/lib/opkg/status"):
             self.timer.callback.append(self.onTimer)
         else:
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
+
         self.pauseAfterFinishImportCheck = eTimer()
         if os.path.exists("/var/lib/opkg/status"):
             self.pauseAfterFinishImportCheck.callback.append(self.afterFinishImportCheck)
         else:
             self.pauseAfterFinishImportCheck_conn = self.pauseAfterFinishImportCheck.timeout.connect(self.afterFinishImportCheck)
         self.pauseAfterFinishImportCheck.startLongTimer(30)
+
         self.update()
 
     def getWakeTime(self):
@@ -979,7 +1008,6 @@ class AutoStartTimer:
             self.timer.startLongTimer(next)
         else:
             wake = -1
-        # log.write("[EPGImport] WakeUpTime now set to %s (now=%s)\n" % (wake, now))
         log.write("[EPGImport] WakeUpTime now set to %s (now=%s)" % (
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(wake)) if wake > 0 else "Not Set",
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
@@ -1001,7 +1029,6 @@ class AutoStartTimer:
     def onTimer(self):
         self.timer.stop()
         now = int(time.time())
-        # log.write("[EPGImport] onTimer occured at" + str(now))
         log.write("[EPGImport] onTimer occurred at %s" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now)))
         wake = self.getWakeTime()
         # If we're close enough, we're okay...
@@ -1134,7 +1161,7 @@ def onBootStartCheck():
 
 
 def autostart(reason, session=None, **kwargs):
-    "called with reason=1 to during shutdown, with reason=0 at startup?"
+    '''called with reason=1 to during shutdown, with reason=0 at startup?'''
     global autoStartTimer
     global _session
     log.write("[EPGImport] autostart (%s) occured at (%s)" % (reason, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
@@ -1159,7 +1186,7 @@ def autostart(reason, session=None, **kwargs):
 
 
 def getNextWakeup():
-    "returns timestamp of next time when autostart should be called"
+    '''returns timestamp of next time when autostart should be called'''
     if autoStartTimer:
         if config.plugins.epgimport.deepstandby.value == 'wakeup' and autoStartTimer.getSources():
             log.write("[EPGImport] Will wake up from deep sleep")

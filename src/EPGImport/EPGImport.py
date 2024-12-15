@@ -61,9 +61,9 @@ mount_points = getMountPoints()
 mount_point = None
 for mp in mount_points:
 	epg_path = os.path.join(mp, 'epg.dat')
-	if os.path.exists(epg_path):
-		mount_point = epg_path
-		break
+	# if os.path.exists(epg_path):
+	mount_point = epg_path
+	break
 
 HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
 
