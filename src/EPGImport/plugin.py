@@ -776,6 +776,7 @@ class EPGImportLogx(Screen):
         # self["list"].setText(self.log.getvalue())
         self.text_lines = self.log.getvalue().splitlines()
         self.current_line = 0
+        self.visible_lines_count = 20
         self["list"] = Label("")
         self.updateText()
         self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"],
@@ -799,20 +800,20 @@ class EPGImportLogx(Screen):
         self.setTitle(_("EPG Import Log"))
 
     def updateText(self):
-        """Aggiorna il testo mostrato nel `Label` basandosi sulla riga corrente."""
-        visible_lines = self.text_lines[self.current_line:self.current_line + 20]  # Mostra 20 righe alla volta
+        """Aggiorna il testo mostrato nel `Label` in base alla riga corrente."""
+        visible_lines = self.text_lines[self.current_line:self.current_line + self.visible_lines_count]
         self["list"].setText("\n".join(visible_lines))
 
     def scrollUp(self):
-        """Scorri il testo verso l'alto."""
+        """Scorri il testo verso l'alto di 20 righe."""
         if self.current_line > 0:
-            self.current_line -= 1
+            self.current_line = max(0, self.current_line - self.visible_lines_count)  # Non andare sotto la riga 0
             self.updateText()
 
     def scrollDown(self):
-        """Scorri il testo verso il basso."""
-        if self.current_line + 20 < len(self.text_lines):
-            self.current_line += 1
+        """Scorri il testo verso il basso di 20 righe."""
+        if self.current_line + self.visible_lines_count < len(self.text_lines):
+            self.current_line = min(len(self.text_lines) - self.visible_lines_count, self.current_line + self.visible_lines_count)
             self.updateText()
 
     def save(self):
