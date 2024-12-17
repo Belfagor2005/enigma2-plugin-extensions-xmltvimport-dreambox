@@ -8,12 +8,12 @@ from ServiceReference import ServiceReference
 from sqlite3 import dbapi2 as sqlite
 from Components.config import config
 from enigma import eTimer
-'''
+"""
 GREENC = '\033[32m'
 ENDC = '\033[m'
 def cprint(text):
 	print(GREENC+"[EPGDB] " + text + ENDC)
-'''
+"""
 
 
 class epgdb_class:

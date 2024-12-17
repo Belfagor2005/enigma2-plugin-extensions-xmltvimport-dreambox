@@ -4,6 +4,7 @@
 import os
 import time
 import shutil
+from Components.config import config
 
 
 def getMountPoints():
@@ -26,9 +27,9 @@ mount_point = None
 
 for mp in mount_points:
 	epg_path = os.path.join(mp, 'epg.dat')
-	# if os.path.exists(epg_path):
-	mount_point = epg_path
-	break
+	if os.path.exists(epg_path):
+		mount_point = epg_path
+		break
 
 
 def checkCrashLog():
@@ -66,6 +67,13 @@ def findNewEpg():
 
 epg = mount_point or '/etc/enigma2/epg.dat'
 newepg = findNewEpg()
+
+if config.misc.epgcache_filename.value:
+	epg = config.misc.epgcache_filename.value
+else:
+	config.misc.epgcache_filename.setValue(epg)
+# config.misc.epgcache_filename.save()
+
 print("Epg.dat found at : ", epg)
 print("newepg  found at : ", newepg)
 

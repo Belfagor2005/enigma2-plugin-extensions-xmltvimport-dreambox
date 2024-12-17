@@ -7,6 +7,7 @@
 #
 from __future__ import absolute_import
 from __future__ import print_function
+from Components.config import config
 from datetime import datetime
 from socket import getaddrinfo, AF_INET6, has_ipv6
 from sys import version_info
@@ -61,12 +62,17 @@ mount_points = getMountPoints()
 mount_point = None
 for mp in mount_points:
 	epg_path = os.path.join(mp, 'epg.dat')
-	# if os.path.exists(epg_path):
-	mount_point = epg_path
-	break
+	if os.path.exists(epg_path):
+		mount_point = epg_path
+		break
 
 HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
 
+if config.misc.epgcache_filename.value:
+	HDD_EPG_DAT = config.misc.epgcache_filename.value
+else:
+	config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
+# config.misc.epgcache_filename.save()
 
 try:
 	from twisted.internet import ssl
@@ -176,7 +182,6 @@ class EPGImport(object):
 	def checkValidServer(self, serverurl):
 		dirname, filename = os.path.split(serverurl)
 		FullString = dirname + '/' + CheckFile
-		# req = urllib2.build_opener()
 
 		if pythonVer == 2:
 			req = urllib2.build_opener()
@@ -216,11 +221,9 @@ class EPGImport(object):
 				except urllib.error.URLError as e:
 					print('[EPGImport] URLError in checkValidServer= ' + str(e.reason))
 					dlderror = 1
-
-				# except http_client.HTTPException as e:
-				# print ('[EPGImport] HTTPException in checkValidServer')
-				# dlderror = 1
-
+				except http_client.HTTPException as e:
+					print ('[EPGImport] HTTPException in checkValidServer')
+					dlderror = 1
 				except Exception:
 					print('[EPGImport] Generic exception in checkValidServer')
 					dlderror = 1

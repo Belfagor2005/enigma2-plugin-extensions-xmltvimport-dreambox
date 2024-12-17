@@ -37,20 +37,19 @@ class epgdatclass:
 		self.services = None
 		path = tmppath
 
-		# Cerca tra i mount points e trova quello corretto
-		for mount_point in mount_points:
-			if '/media' in mount_point:
-				path = mount_point  # Imposta il percorso dell'istanza
-				break  # Esci non appena trovi un punto di montaggio valido
+		# for mount_point in mount_points:
+			# if '/media' in mount_point:
+				# path = mount_point
+				# break
 
-		# if self.checkPath('/media/cf'):
-			# path = '/media/cf'
-		# if self.checkPath('/media/mmc'):
-			# path = '/media/mmc'
-		# if self.checkPath('/media/usb'):
-			# path = '/media/usb'
-		# if self.checkPath('/media/hdd'):
-			# path = '/media/hdd'
+		if self.checkPath('/media/cf'):
+			path = '/media/cf'
+		if self.checkPath('/media/mmc'):
+			path = '/media/mmc'
+		if self.checkPath('/media/usb'):
+			path = '/media/usb'
+		if self.checkPath('/media/hdd'):
+			path = '/media/hdd'
 
 		if os.path.exists("/var/lib/dpkg/status"):
 			from Components.config import config
