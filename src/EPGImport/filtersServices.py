@@ -3,15 +3,16 @@
 
 from . import _
 
-from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
-from Screens.ChoiceBox import ChoiceBox
 from Components.ActionMap import ActionMap
-from ServiceReference import ServiceReference
-from Screens.ChannelSelection import service_types_radio, service_types_tv, ChannelSelectionBase
-from enigma import eServiceReference, eServiceCenter, getDesktop
-from Components.Sources.List import List
 from Components.Label import Label
+from Components.Sources.List import List
+from enigma import eServiceReference, eServiceCenter, getDesktop
+from Screens.ChannelSelection import service_types_radio, service_types_tv, ChannelSelectionBase
+from Screens.ChoiceBox import ChoiceBox
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from ServiceReference import ServiceReference
+
 import os
 
 from . import EPGConfig
@@ -176,10 +177,10 @@ class filtersServicesSetup(Screen):
         self["list"] = List([])
         self.updateList()
 
-        self["key_red"] = Label(" ")
+        self["key_red"] = Label("")
         self["key_green"] = Label(_("Add Provider"))
         self["key_yellow"] = Label(_("Add Channel"))
-        self["key_blue"] = Label(" ")
+        self["key_blue"] = Label("")
         self["introduction"] = Label(_("press OK to save list"))
         self.updateButtons()
 
@@ -212,7 +213,7 @@ class filtersServicesSetup(Screen):
                 self.RefList.addServices(ref)
             else:
                 refstr = ':'.join(ref.toString().split(':')[:11])
-                if '1:0:' in refstr:
+                if any(x in refstr for x in ('1:0:', '4097:0:', '5001:0:', '5002:0:')):
                     self.RefList.addService(refstr)
             self.updateList()
             self.updateButtons()
@@ -255,8 +256,8 @@ class filtersServicesSetup(Screen):
             self["key_red"].setText(_("Delete selected"))
             self["key_blue"].setText(_("Delete all"))
         else:
-            self["key_red"].setText(" ")
-            self["key_blue"].setText(" ")
+            self["key_red"].setText("")
+            self["key_blue"].setText("")
 
 
 class filtersServicesSelection(ChannelSelectionBase):

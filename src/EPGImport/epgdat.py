@@ -3,6 +3,7 @@
 # Heavily modified by MiLo http://www.sat4all.com/
 # Lots of stuff removed that i did not need.
 
+from __future__ import absolute_import, print_function
 import os
 import struct
 from datetime import datetime
@@ -14,7 +15,7 @@ try:
 	def crc32_dreambox(d, t):
 		return dreamcrc.crc32(d, t) & 0xffffffff
 	print("[EPGImport] using C module, yay")
-except:
+except ImportError:
 	print("[EPGImport] failed to load C implementation, sorry")
 
 	# this table is used by CRC32 routine below (used by Dreambox for
@@ -108,7 +109,7 @@ except:
 
 
 def TL_hexconv(dt):
-	return ((dt.hour % 10) + (16 * (dt.hour / 10)), (dt.minute % 10) + (16 * (dt.minute / 10)), (dt.second % 10) + (16 * (dt.second / 10)))
+	return ((dt.hour % 10) + (16 * (dt.hour // 10)), (dt.minute % 10) + (16 * (dt.minute // 10)), (dt.second % 10) + (16 * (dt.second // 10)))
 
 
 class epgdat_class:
@@ -220,7 +221,7 @@ class epgdat_class:
 				EPG_EVENT_HEADER_datasize += 4  # add 4 bytes for a sigle REF DESC (CRC32)
 				# if not epg_event_description_dict.has_key(short_d[0]):
 				# if not exist_event(short_d[0]) :
-				if not self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER.has_key(short_d[0]):
+				if short_d[0] not in self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER:
 					# DESCRIPTION DATA
 					pack_1 = s_BB.pack(0x4d, len(short_d[1])) + short_d[1]
 					# DESCRIPTION HEADER (2 int) will be computed at the end just before EPG.DAT write
@@ -237,7 +238,7 @@ class epgdat_class:
 				for desc in long_d:
 					# if not epg_event_description_dict.has_key(long_d[i][0]):
 					# if not exist_event(long_d[i][0]) :
-					if not self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER.has_key(desc[0]):
+					if desc[0] not in self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER:
 						# DESCRIPTION DATA
 						pack_1 = s_BB.pack(0x4e, len(desc[1])) + desc[1]
 						self.EPG_HEADER2_description_count += 1
@@ -278,7 +279,7 @@ class epgdat_class:
 			self.EPG_TMP_FD.close()
 			epgdat_fd = open(self.EPGDAT_FILENAME, "wb")
 			# HEADER 1
-			pack_1 = struct.pack(self.LB_ENDIAN + "I13sI", 0x98765432, 'ENIGMA_EPG_V7', self.EPG_HEADER1_channel_count)
+			pack_1 = struct.pack(self.LB_ENDIAN + "I13sI", 0x98765432, 'ENIGMA_EPG_V8', self.EPG_HEADER1_channel_count)
 			epgdat_fd.write(pack_1)
 			# write first EPG.DAT section
 			EPG_TMP_FD = open(self.EPGDAT_TMP_FILENAME, "rb")
@@ -293,7 +294,7 @@ class epgdat_class:
 			pack_1 = self.s_I.pack(self.EPG_HEADER2_description_count)
 			epgdat_fd.write(pack_1)
 			# event MUST BE WRITTEN IN ASCENDING ORDERED using HASH CODE as index
-			for temp in sorted(self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER.keys()):
+			for temp in sorted(list(self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER.keys())):
 				pack_2 = self.EPGDAT_HASH_EVENT_MEMORY_CONTAINER[temp]
 				# pack_1=struct.pack(LB_ENDIAN+"II",int(temp,16),pack_2[1])
 				pack_1 = s_ii.pack(temp, pack_2[1])

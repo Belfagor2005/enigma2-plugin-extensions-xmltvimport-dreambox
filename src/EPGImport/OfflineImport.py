@@ -7,6 +7,7 @@
 # where they can be found. On Linux, you can also download from the internet,
 # on windows the xmltv files must be local files.
 #
+from __future__ import absolute_import, print_function
 import sys
 import time
 from . import EPGConfig
@@ -14,8 +15,9 @@ from . import EPGImport
 
 EPGImport.HDD_EPG_DAT = "./epg.dat.new"
 
-
 # Emulate an Enigma that has no patch whatsoever.
+
+
 class FakeEnigma:
 
 	def getInstance(self):
@@ -59,8 +61,9 @@ def importFrom(epgimport, sourceXml):
 	epgimport.beginImport(longDescUntil=time.time() + (5 * 24 * 3600))
 	EPGImport.reactor.run()
 
-
 # ----------------------------------------------
+
+
 def done(reboot=False, epgfile=None):
 	EPGImport.reactor.stop()
 	print("Done, data is in", epgfile)

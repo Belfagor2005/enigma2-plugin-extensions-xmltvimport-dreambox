@@ -6,8 +6,12 @@
 # because the log unit looks enough like a file!
 
 import sys
-from cStringIO import StringIO
 import threading
+
+try:  # python2 only
+	from cStringIO import StringIO
+except:  # both python2 and python3
+	from io import StringIO
 
 logfile = StringIO()
 # Need to make our operations thread-safe.
@@ -18,9 +22,9 @@ def write(data):
 	mutex.acquire()
 	try:
 		if logfile.tell() > 1000000:
-			logfile.reset()
+			logfile.write("")
 		logfile.write(data + '\n')
-		# logfile.write('\n')
+
 	finally:
 		mutex.release()
 	sys.stdout.write(data)
@@ -31,7 +35,8 @@ def getvalue():
 	try:
 		pos = logfile.tell()
 		head = logfile.read()
-		logfile.reset()
+		# logfile.seek(0, 0)
+		logfile.write("")
 		tail = logfile.read(pos)
 	finally:
 		mutex.release()

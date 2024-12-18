@@ -1,7 +1,9 @@
-import time
-import calendar
+from __future__ import absolute_import
+from __future__ import print_function
 from . import log
 from xml.etree.cElementTree import iterparse
+import time
+import calendar
 
 
 try:
@@ -39,12 +41,12 @@ def get_xml_string(elem, name):
 		for node in elem.findall(name):
 			txt = node.text
 			lang = node.get('lang', None)
-			if not r:
+			if not r and txt is not None:
 				r = txt
 			elif lang == "nl":
 				r = txt
 	except Exception as e:
-		print("[XMLTVConverter] get_xml_string error:",  e)
+		print("[XMLTVConverter] get_xml_string error:", e)
 	# Now returning UTF-8 by default, the epgdat/oudeis must be adjusted to make this work.
 	return r.encode('utf-8')
 
@@ -141,12 +143,15 @@ def get_xml_language(elem, name):
 def enumerateProgrammes(fp):
 	"""Enumerates programme ElementTree nodes from file object 'fp'"""
 	for event, elem in iterparse(fp):
-		if elem.tag == 'programme':
-			yield elem
-			elem.clear()
-		elif elem.tag == 'channel':
-			# Throw away channel elements, save memory
-			elem.clear()
+		try:
+			if elem.tag == 'programme':
+				yield elem
+				elem.clear()
+			elif elem.tag == 'channel':
+				# Throw away channel elements, save memory
+				elem.clear()
+		except Exception as e:
+			print("[XMLTVConverter] enumerateProgrammes error:", e)
 
 
 class XMLTVConverter:
