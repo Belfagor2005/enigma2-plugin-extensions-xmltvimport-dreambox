@@ -78,12 +78,13 @@ for mp in mount_points:
         break
 
 
-HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
+# HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
+HDD_EPG_DAT = '/etc/enigma2/epg.dat'
 if config.misc.epgcache_filename.value:
     HDD_EPG_DAT = config.misc.epgcache_filename.value
 else:
     config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
-config.misc.epgcache_filename.save()
+# config.misc.epgcache_filename.save()
 
 
 # Set default configuration
@@ -105,7 +106,7 @@ config.plugins.epgimport.deepstandby = ConfigSelection(default="skip", choices=[
     ("skip", _("skip the import"))
 ])
 
-config.plugins.epgimport.pathdb = ConfigDirectory(default=HDD_EPG_DAT)
+config.plugins.epgimport.pathdb = ConfigDirectory(default='/etc/enigma2/epg.dat')
 # config.plugins.epgimport.pathdb = ConfigText(default=HDD_EPG_DAT)
 config.plugins.epgimport.standby_afterwakeup = ConfigYesNo(default=False)
 config.plugins.epgimport.shutdown = ConfigYesNo(default=False)
@@ -353,7 +354,6 @@ class EPGImportConfig(ConfigListScreen, Screen):
         self.updateStatus()
         self.onLayoutFinish.append(self.__layoutFinished)
 
-    # for summary:
     def changedEntry(self):
         for x in self.onChangedEntry:
             x()
@@ -497,7 +497,8 @@ class EPGImportConfig(ConfigListScreen, Screen):
         elif sel == self.EPG.pathdb:
             self.setting = "pathdb"
             if hasattr(config.misc.epgcache_filename, 'value'):
-                self.openDirectoryBrowser(config.misc.epgcache_filename.value, self.setting)
+                self.openDirectoryBrowser(self.EPG.pathdb.value, self.setting)
+                print('new value=', self.EPG.pathdb.getValue())
             else:
                 print("[EPGImport] Invalid configuration for epgcache_filename")
         else:
@@ -506,9 +507,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
     def openDirectoryBrowser(self, path, itemcfg):
         from Components.config import ConfigLocations
         try:
-            # Crea un oggetto ConfigLocations per bookmarks
-            bookmarks = ConfigLocations(default=[config.misc.epgcache_filename.value]) if hasattr(config.misc.epgcache_filename, "value") else ConfigLocations()
-
+            # bookmarks = ConfigLocations(default=[config.misc.epgcache_filename.value]) if hasattr(config.misc.epgcache_filename, "value") else ConfigLocations()
             callback_map = {
                 "pathdb": self.openDirectoryBrowserCB(config.misc.epgcache_filename),
             }
@@ -519,7 +518,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
                     windowTitle=_("Choose Directory:"),
                     text=_("Choose directory"),
                     currDir=str(path),
-                    bookmarks=bookmarks,  # Passa un oggetto ConfigLocations
+                    bookmarks=config.movielist.videodirs, #  bookmarks,
                     autoAdd=True,
                     editDir=True,
                     inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"]
@@ -527,13 +526,12 @@ class EPGImportConfig(ConfigListScreen, Screen):
         except Exception as e:
             print("[EPGImport] Error opening directory browser:", e)
 
-
     def openDirectoryBrowserCB(self, config_entry):
         def callback(path):
             if path is not None:
-                path = os.path.join(path, 'epg.dat')  # Usa os.path.join per la portabilità
-                print("epg path=:", path)
-                config_entry.setValue(path)
+                pathz = os.path.join(path, 'epg.dat')
+                print("epg path=:", pathz)
+                self.EPG.pathdb.setValue(pathz)
         return callback
 
     def updateStatus(self):
@@ -551,7 +549,6 @@ class EPGImportConfig(ConfigListScreen, Screen):
             try:
                 d, t = FuzzyTime(start, inPast=True)
             except:
-                # Not all images have inPast
                 d, t = FuzzyTime(start)
             self["statusbar"].setText(_("Last: %s %s, %d events") % (d, t, count))
             self.lastImportResult = lastImportResult

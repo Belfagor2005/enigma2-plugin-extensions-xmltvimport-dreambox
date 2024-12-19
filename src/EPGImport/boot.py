@@ -65,14 +65,14 @@ def findNewEpg():
 	return None
 
 
-epg = mount_point or '/etc/enigma2/epg.dat'
+epg = '/etc/enigma2/epg.dat'
 newepg = findNewEpg()
 
 if config.misc.epgcache_filename.value:
 	epg = config.misc.epgcache_filename.value
 else:
 	config.misc.epgcache_filename.setValue(epg)
-# config.misc.epgcache_filename.save()
+
 
 print("Epg.dat found at : ", epg)
 print("newepg  found at : ", newepg)

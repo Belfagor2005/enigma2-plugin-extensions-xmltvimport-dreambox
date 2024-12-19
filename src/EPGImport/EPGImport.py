@@ -66,13 +66,14 @@ for mp in mount_points:
 		mount_point = epg_path
 		break
 
-HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
-
+# HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
+HDD_EPG_DAT = '/etc/enigma2/epg.dat'
 if config.misc.epgcache_filename.value:
-	HDD_EPG_DAT = config.misc.epgcache_filename.value
+    HDD_EPG_DAT = config.misc.epgcache_filename.value
 else:
-	config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
+    config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
 # config.misc.epgcache_filename.save()
+
 
 try:
 	from twisted.internet import ssl
