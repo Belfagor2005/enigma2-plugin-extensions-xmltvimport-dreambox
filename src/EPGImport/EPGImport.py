@@ -557,7 +557,8 @@ class EPGImport(object):
 		if not path or not os.path.isdir(path):
 			print("[EPGImport] Percorso non valido, usando '/tmp'")
 			path = '/tmp'  # Usa un fallback come /tmp se il percorso non è valido.
-
+		if "meia" in path:
+			path = path.replace("meia", "media")
 		filename = os.path.join(path, 'epgimport')
 		ext = os.path.splitext(sourcefile)[1]
 		# Keep sensible extension, in particular the compression type
