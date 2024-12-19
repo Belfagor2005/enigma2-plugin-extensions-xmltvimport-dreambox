@@ -10,9 +10,11 @@ from Components.Label import Label
 # from Components.ScrollLabel import ScrollLabel
 from Components.config import config, ConfigEnableDisable, ConfigSubsection, \
     ConfigYesNo, ConfigClock, getConfigListEntry, ConfigText, \
-    ConfigSelection, ConfigNumber, ConfigSubDict, NoSave, configfile
+    ConfigSelection, ConfigNumber, ConfigSubDict, NoSave, configfile, ConfigDirectory
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
+from Screens.LocationBox import LocationBox
+
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
@@ -103,7 +105,8 @@ config.plugins.epgimport.deepstandby = ConfigSelection(default="skip", choices=[
     ("skip", _("skip the import"))
 ])
 
-config.plugins.epgimport.pathdb = ConfigText(default=HDD_EPG_DAT)
+config.plugins.epgimport.pathdb = ConfigDirectory(default=HDD_EPG_DAT)
+# config.plugins.epgimport.pathdb = ConfigText(default=HDD_EPG_DAT)
 config.plugins.epgimport.standby_afterwakeup = ConfigYesNo(default=False)
 config.plugins.epgimport.shutdown = ConfigYesNo(default=False)
 config.plugins.epgimport.longDescDays = ConfigNumber(default=5)
@@ -491,6 +494,47 @@ class EPGImportConfig(ConfigListScreen, Screen):
         sel = self["config"].getCurrent()[1]
         if sel and sel == self.EPG.day_profile:
             self.session.open(EPGImportProfile)
+        elif sel == self.EPG.pathdb:
+            self.setting = "pathdb"
+            if hasattr(config.misc.epgcache_filename, 'value'):
+                self.openDirectoryBrowser(config.misc.epgcache_filename.value, self.setting)
+            else:
+                print("[EPGImport] Invalid configuration for epgcache_filename")
+        else:
+            return
+
+    def openDirectoryBrowser(self, path, itemcfg):
+        from Components.config import ConfigLocations
+        try:
+            # Crea un oggetto ConfigLocations per bookmarks
+            bookmarks = ConfigLocations(default=[config.misc.epgcache_filename.value]) if hasattr(config.misc.epgcache_filename, "value") else ConfigLocations()
+
+            callback_map = {
+                "pathdb": self.openDirectoryBrowserCB(config.misc.epgcache_filename),
+            }
+            if itemcfg in callback_map:
+                self.session.openWithCallback(
+                    callback_map[itemcfg],
+                    LocationBox,
+                    windowTitle=_("Choose Directory:"),
+                    text=_("Choose directory"),
+                    currDir=str(path),
+                    bookmarks=bookmarks,  # Passa un oggetto ConfigLocations
+                    autoAdd=True,
+                    editDir=True,
+                    inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"]
+                )
+        except Exception as e:
+            print("[EPGImport] Error opening directory browser:", e)
+
+
+    def openDirectoryBrowserCB(self, config_entry):
+        def callback(path):
+            if path is not None:
+                path = os.path.join(path, 'epg.dat')  # Usa os.path.join per la portabilità
+                print("epg path=:", path)
+                config_entry.setValue(path)
+        return callback
 
     def updateStatus(self):
         text = ""
