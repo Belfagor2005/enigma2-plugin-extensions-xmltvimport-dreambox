@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import time
 import shutil
+import time
 from Components.config import config
+
+MEDIA = ("/media/hdd/", "/media/usb/", "/media/mmc/", "/media/cf/", "/tmp")
 
 
 def getMountPoints():
@@ -23,6 +25,24 @@ def getMountPoints():
 
 mount_points = getMountPoints()
 mount_point = None
+
+
+def findEpg():
+	candidates = []
+	for path in MEDIA:
+		try:
+			if os.path.exists(path):
+				for fn in os.listdir(path):
+					if "epg.dat" in fn:
+						ffn = os.path.join(path, fn)
+						candidates.append((os.path.getctime(ffn), ffn))
+		except:
+			pass  # ignore errors.
+	if not candidates:
+		return None
+	candidates.sort()  # order by ctime...
+	# best candidate is most recent filename.
+	return candidates[-1][1]
 
 
 for mp in mount_points:
@@ -72,11 +92,8 @@ if config.misc.epgcache_filename.value:
 	epg = config.misc.epgcache_filename.value
 else:
 	config.misc.epgcache_filename.setValue(epg)
-
-
 print("Epg.dat found at : ", epg)
 print("newepg  found at : ", newepg)
-
 
 # Delete epg.dat if last crash was because of error in epg.dat
 if checkCrashLog():
@@ -84,7 +101,6 @@ if checkCrashLog():
 		os.unlink(epg)
 	except:
 		print("delete error")
-
 
 # if excists cp epg_new.dat epg.dat
 if newepg:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-
+from . import EPGConfig
 from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.Sources.List import List
@@ -12,10 +12,8 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
-
 import os
 
-from . import EPGConfig
 sz_w = getDesktop(0).size().width()
 
 OFF = 0

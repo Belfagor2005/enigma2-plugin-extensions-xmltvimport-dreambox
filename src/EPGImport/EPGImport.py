@@ -4,7 +4,6 @@
 # This file no longer has a direct link to Enigma2, allowing its use anywhere
 # you can supply a similar interface. See plugin.py and OfflineImport.py for
 # the contract.
-#
 from __future__ import absolute_import
 from __future__ import print_function
 from Components.config import config
@@ -41,7 +40,10 @@ alloweddelta = 2
 CheckFile = 'LastUpdate.txt'
 ServerStatusList = {}
 # MEDIA = ("/media/hdd/", "/media/usb/", "/media/mmc/", "/media/cf/", "/tmp")
-PARSERS = {'xmltv': 'gen_xmltv', 'genxmltv': 'gen_xmltv'}
+PARSERS = {
+	'xmltv': 'gen_xmltv',
+	'genxmltv': 'gen_xmltv',
+}
 
 
 def getMountPoints():
@@ -214,6 +216,7 @@ class EPGImport(object):
 
 			else:
 
+										   
 				try:
 					response = req.open(FullString)
 				except urllib.error.HTTPError as e:

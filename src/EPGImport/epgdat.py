@@ -9,7 +9,7 @@ import struct
 from datetime import datetime
 
 try:
-	import dreamcrc
+	from . import dreamcrc
 	# crc32_dreambox = lambda d, t: dreamcrc.crc32(d, t) & 0xffffffff
 
 	def crc32_dreambox(d, t):
@@ -17,7 +17,6 @@ try:
 	print("[EPGImport] using C module, yay")
 except ImportError:
 	print("[EPGImport] failed to load C implementation, sorry")
-
 	# this table is used by CRC32 routine below (used by Dreambox for
 	# computing REF DESC value).
 	# The original DM routine is a modified CRC32 standard routine,
@@ -109,7 +108,9 @@ except ImportError:
 
 
 def TL_hexconv(dt):
-	return ((dt.hour % 10) + (16 * (dt.hour // 10)), (dt.minute % 10) + (16 * (dt.minute // 10)), (dt.second % 10) + (16 * (dt.second // 10)))
+	return ((dt.hour % 10) + (16 * (dt.hour // 10)),
+			(dt.minute % 10) + (16 * (dt.minute // 10)),
+			(dt.second % 10) + (16 * (dt.second // 10)))
 
 
 class epgdat_class:
