@@ -4,11 +4,9 @@
 from . import isDreambox
 from Components.MenuList import MenuList
 from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop
-from Tools.Directories import SCOPE_CURRENT_SKIN, SCOPE_PLUGINS, resolveFilename
+from Tools.Directories import SCOPE_PLUGINS, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
-import os
-
-
+# import os
 
 
 FHD = False

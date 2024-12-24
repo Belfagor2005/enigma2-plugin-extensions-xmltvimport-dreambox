@@ -4,6 +4,7 @@
 # This file no longer has a direct link to Enigma2, allowing its use anywhere
 # you can supply a similar interface. See plugin.py and OfflineImport.py for
 # the contract.
+
 from __future__ import absolute_import
 from __future__ import print_function
 from Components.config import config
@@ -26,11 +27,22 @@ except:
 	pythonVer = 2
 
 
-if pythonVer == 2:
-	import urllib2
-	import httplib
-else:
-	import urllib
+try:  # python3
+	from http.client import HTTPException
+	from urllib.error import HTTPError, URLError
+	# from urllib.parse import urlparse
+	from urllib.request import build_opener
+except:  # python2
+	from httplib import HTTPException
+	from urllib2 import build_opener, HTTPError, URLError
+	# from urlparse import urlparse
+
+
+# if pythonVer == 2:
+	# import urllib2
+	# import httplib
+# else:
+	# import urllib
 
 
 # Used to check server validity
@@ -71,9 +83,9 @@ for mp in mount_points:
 # HDD_EPG_DAT = mount_point or '/etc/enigma2/epg.dat'
 HDD_EPG_DAT = '/etc/enigma2/epg.dat'
 if config.misc.epgcache_filename.value:
-    HDD_EPG_DAT = config.misc.epgcache_filename.value
+	HDD_EPG_DAT = config.misc.epgcache_filename.value
 else:
-    config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
+	config.misc.epgcache_filename.setValue(HDD_EPG_DAT)
 # config.misc.epgcache_filename.save()
 
 
@@ -185,52 +197,29 @@ class EPGImport(object):
 	def checkValidServer(self, serverurl):
 		dirname, filename = os.path.split(serverurl)
 		FullString = dirname + '/' + CheckFile
-
-		if pythonVer == 2:
-			req = urllib2.build_opener()
-		else:
-			req = urllib.request.build_opener()
-
+		req = build_opener()
 		req.addheaders = [('User-Agent', 'Twisted Client')]
 		dlderror = 0
 		if dirname in ServerStatusList:
 			# If server is know return its status immediately
 			return ServerStatusList[dirname]
 		else:
-			# Server not in the list so checking it
-			if pythonVer == 2:
-				try:
-					response = req.open(FullString)
-				except urllib2.HTTPError as e:
-					print('[EPGImport] HTTPError in checkValidServer= ' + str(e.code))
-					dlderror = 1
-				except urllib2.URLError as e:
-					print('[EPGImport] URLError in checkValidServer= ' + str(e.reason))
-					dlderror = 1
-				except httplib.HTTPException as e:
-					print('[EPGImport] HTTPException in checkValidServer', e)
-					dlderror = 1
-				except Exception:
-					print('[EPGImport] Generic exception in checkValidServer')
-					dlderror = 1
-
-			else:
-
-										   
-				try:
-					response = req.open(FullString)
-				except urllib.error.HTTPError as e:
-					print('[EPGImport] HTTPError in checkValidServer= ' + str(e.code))
-					dlderror = 1
-				except urllib.error.URLError as e:
-					print('[EPGImport] URLError in checkValidServer= ' + str(e.reason))
-					dlderror = 1
-				except http_client.HTTPException as e:
-					print ('[EPGImport] HTTPException in checkValidServer')
-					dlderror = 1
-				except Exception:
-					print('[EPGImport] Generic exception in checkValidServer')
-					dlderror = 1
+			# # Server not in the list so checking it
+			# if pythonVer == 2:
+			try:
+				response = req.open(FullString)
+			except HTTPError as e:
+				print('[EPGImport] HTTPError in checkValidServer= ' + str(e.code))
+				dlderror = 1
+			except URLError as e:
+				print('[EPGImport] URLError in checkValidServer= ' + str(e.reason))
+				dlderror = 1
+			except HTTPException as e:
+				print('[EPGImport] HTTPException in checkValidServer', e)
+				dlderror = 1
+			except Exception:
+				print('[EPGImport] Generic exception in checkValidServer')
+				dlderror = 1
 
 		if not dlderror:
 			LastTime = response.read().strip('\n')

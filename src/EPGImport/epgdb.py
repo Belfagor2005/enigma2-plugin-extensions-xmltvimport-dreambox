@@ -6,6 +6,7 @@ import time
 from enigma import eEPGCache, cachestate
 from ServiceReference import ServiceReference
 from sqlite3 import dbapi2 as sqlite
+
 from Components.config import config
 from enigma import eTimer
 """
@@ -144,7 +145,7 @@ class epgdb_class:
 		cursor_extended_desc = self.connection.cursor()
 		cursor_data = self.connection.cursor()
 
-		EPG_EVENT_DATA_id = 0
+		# EPG_EVENT_DATA_id = 0
 		events = []
 
 		# now we go through all the channels we got
@@ -352,6 +353,28 @@ class epgdb_class:
 			result = cursor.fetchall()
 			text_result = ""
 			for res in result:
+				text_result += str(res[0])
+		except sqlite.Error as e:  # Usa sqlite.Error correttamente
+			text_result = "[EPGDB] Error: %s" % str(e)
+		finally:
+			cursor.close()
+			connection.close()
+		print("CHECK RESULT %s" % text_result)
+		return text_result
+
+	"""
+	def check_epgdb(self):
+		print("CHECKS EPG database")
+		text_result = ""
+		connection = sqlite.connect(config.misc.epgcache_filename.value, timeout=10)
+		connection.text_factory = str
+		cursor = connection.cursor()
+		cmd = "PRAGMA quick_check"
+		try:
+			cursor.execute(cmd)
+			result = cursor.fetchall()
+			text_result = ""
+			for res in result:
 				text_result = text_result + str(res[0])
 		except MySQLdb.Error as e:
 			text_result = "[EPGDB] Error [%d]: %s" % (e.args[0], e.args[1])
@@ -359,3 +382,4 @@ class epgdb_class:
 		connection.close()
 		print("CHECK RESULT %s" % text_result)
 		return text_result
+	"""

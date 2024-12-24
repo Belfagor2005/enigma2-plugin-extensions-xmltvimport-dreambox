@@ -6,6 +6,7 @@ import shutil
 import time
 from Components.config import config
 
+
 MEDIA = ("/media/hdd/", "/media/usb/", "/media/mmc/", "/media/cf/", "/tmp")
 
 
