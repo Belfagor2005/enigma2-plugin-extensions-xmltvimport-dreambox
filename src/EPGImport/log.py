@@ -35,27 +35,3 @@ def getvalue():
         head = logfile.read()  # Read the entire buffer
         logfile.seek(0)  # Reset to the start
         return head
-
-
-# def write(data):
-	# mutex.acquire()
-	# try:
-		# if logfile.tell() > 1000000:
-			# logfile.write("")
-		# logfile.write(data + '\n')
-	# finally:
-		# mutex.release()
-	# sys.stdout.write(data)
-
-# def getvalue():
-	# mutex.acquire()
-	# try:
-		# pos = logfile.tell()
-		# head = logfile.read()
-		# # logfile.seek(0, 0)
-		# logfile.write("")
-		# tail = logfile.read(pos)
-	# finally:
-		# mutex.release()
-	# return head + tail
-
