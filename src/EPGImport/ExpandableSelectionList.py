@@ -6,7 +6,6 @@ from Components.MenuList import MenuList
 from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop
 from Tools.Directories import SCOPE_PLUGINS, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
-# import os
 
 
 FHD = False
@@ -50,9 +49,9 @@ def loadSettings():
     global cat_desc_loc, entry_desc_loc, cat_icon_loc, entry_icon_loc
 
     if WQHD:
-        x, y, w, h = (40, 4, 1200, 120)
+        x, y, w, h = (50, 4, 1200, 120)
     elif FHD:
-        x, y, w, h = (30, 9, 1200, 60)
+        x, y, w, h = (40, 9, 1200, 60)
     else:
         x, y, w, h = (20, 3, 800, 30)
     ind = x  # Indent the entries by the same amount as the icon.
@@ -60,11 +59,11 @@ def loadSettings():
     entry_desc_loc = (x + ind, y, w - ind, h)
 
     if WQHD:
-        x, y, w, h = (-40, 18, 30, 33)  # y calcolato come (70 - 33) / 2
+        x, y, w, h = (0, 18, 30, 33)  # y calcolato come (70 - 33) / 2
     elif FHD:
-        x, y, w, h = (-40, 12, 30, 33)  # y calcolato come (50 - 33) / 2
+        x, y, w, h = (0, 12, 30, 33)  # y calcolato come (50 - 33) / 2
     else:
-        x, y, w, h = (-20, 0, 30, 33)  # y calcolato come (30 - 33) / 2
+        x, y, w, h = (0, 0, 30, 33)  # y calcolato come (30 - 33) / 2
     cat_icon_loc = (x, y, w, h)
     entry_icon_loc = (x + ind, y, w, h)
 
@@ -97,13 +96,6 @@ def entry(description, value, selected):
     else:
         selectionpng = lock_off
         res.append((boxPythonMultiContent,) + entry_icon_loc + (selectionpng,))
-
-    # if selected:
-        # selectionpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_on.png"))
-        # res.append((boxPythonMultiContent,) + entry_icon_loc + (selectionpng,))
-    # else:
-        # selectionpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_off.png"))
-        # res.append((boxPythonMultiContent,) + entry_icon_loc + (selectionpng,))
     return res
 
 
@@ -139,7 +131,7 @@ class ExpandableSelectionList(MenuList):
         if WQHD:
             font = ("Regular", 48, 70)  # Altezza riga: 70
         elif FHD:
-            font = ("Regular", 37, 60)  # Altezza riga: 50
+            font = ("Regular", 37, 60)  # Altezza riga: 60
         else:
             font = ("Regular", 24, 30)  # Altezza riga: 30
 
