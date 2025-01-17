@@ -7,7 +7,6 @@ from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop
 from Tools.Directories import SCOPE_PLUGINS, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 
-
 FHD = False
 WQHD = False
 if getDesktop(0).size().width() == 1920:
@@ -16,17 +15,23 @@ if getDesktop(0).size().width() == 2560:
     WQHD = True
 
 
-# gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/icons/expandable.png': No such file or directory
-# gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/icons/expanded.png': No such file or directory
-# gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/skin_default/icons/lock_on.png': No such file or directory
-# gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/skin_default/icons/lock_off.png': No such file or directory
+try:
+    from PIL import Image
+except ImportError:
+    from Image import Image
 
-# PathPLugin = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('EPGImport'))
-# expandableIcon = LoadPixmap(PathPLugin, "icons/expandable.png"))
-# expandedIcon = LoadPixmap(resolveFilename(PathPLugin, "icons/expanded.png"))
-# lock_on = LoadPixmap(resolveFilename(PathPLugin, "skin_default/icons/lock_on.png"))
-# lock_off = LoadPixmap(resolveFilename(PathPLugin, "skin_default/icons/lock_off.png"))
+"""
+gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/icons/expandable.png': No such file or directory
+gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/icons/expanded.png': No such file or directory
+gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/skin_default/icons/lock_on.png': No such file or directory
+gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/skin_default/icons/lock_off.png': No such file or directory
 
+PathPLugin = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('EPGImport'))
+expandableIcon = LoadPixmap(PathPLugin, "icons/expandable.png"))
+expandedIcon = LoadPixmap(resolveFilename(PathPLugin, "icons/expanded.png"))
+lock_on = LoadPixmap(resolveFilename(PathPLugin, "skin_default/icons/lock_on.png"))
+lock_off = LoadPixmap(resolveFilename(PathPLugin, "skin_default/icons/lock_off.png"))
+"""
 
 PathPlugin = resolveFilename(SCOPE_PLUGINS, "Extensions/EPGImport/")
 expandableIcon = LoadPixmap(PathPlugin + "icon/expandable.png")
@@ -35,13 +40,32 @@ lock_on = LoadPixmap(PathPlugin + "icon/lock_on.png")
 lock_off = LoadPixmap(PathPlugin + "icon/lock_off.png")
 
 
+def fix_png(file_path):
+    try:
+        with Image.open(file_path) as img:
+            img.save(file_path, "PNG")
+            print("Corretto il profilo colore per:", file_path)
+    except Exception as e:
+        print("Errore durante la correzione di %s: %s" % (file_path, str(e)))
+
+
+images = [
+    expandableIcon,
+    expandedIcon,
+    lock_on,
+    lock_off
+]
+
+for image_path in images:
+    fix_png(image_path)
+
 """
-# if isDreambox:
-    # expandableIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/expandable.png"))
-    # expandedIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/expanded.png"))
-# else:
-    # expandableIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "icons/expandable.png"))
-    # expandedIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "icons/expanded.png"))
+if isDreambox:
+    expandableIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/expandable.png"))
+    expandedIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/expanded.png"))
+else:
+    expandableIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "icons/expandable.png"))
+    expandedIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "icons/expanded.png"))
 """
 
 
