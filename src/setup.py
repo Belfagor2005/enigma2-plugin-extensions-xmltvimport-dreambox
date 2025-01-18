@@ -7,7 +7,7 @@ dreamcrc = Extension('Extensions/EPGImport/dreamcrc',
 
 pkg = 'Extensions.EPGImport'
 setup (name = 'enigma2-plugin-extensions-xmltvimport',
-       version = '0.9.12',
+       version = '3.0',
        description = 'C implementation of Dream CRC32 algorithm',
        package_dir = {pkg: 'EPGImport'},
        packages = [pkg],

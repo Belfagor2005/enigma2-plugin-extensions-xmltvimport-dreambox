@@ -15,10 +15,10 @@ if getDesktop(0).size().width() == 2560:
     WQHD = True
 
 
-try:
-    from PIL import Image
-except ImportError:
-    from Image import Image
+# try:
+    # from PIL import Image
+# except ImportError:
+    # from Image import Image
 
 """
 gPixmap: Failed to access '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport/icons/expandable.png': No such file or directory
@@ -49,15 +49,15 @@ def fix_png(file_path):
         print("Errore durante la correzione di %s: %s" % (file_path, str(e)))
 
 
-images = [
-    expandableIcon,
-    expandedIcon,
-    lock_on,
-    lock_off
-]
+# images = [
+    # expandableIcon,
+    # expandedIcon,
+    # lock_on,
+    # lock_off
+# ]
 
-for image_path in images:
-    fix_png(image_path)
+# for image_path in images:
+    # fix_png(image_path)
 
 """
 if isDreambox:
