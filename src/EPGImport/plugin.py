@@ -711,6 +711,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
             if config.plugins.epgimport.execute_shell.value and config.plugins.epgimport.shell_name.value:
                 Console().eBatch([config.plugins.epgimport.shell_name.value], self.executeShellEnd, debug=True)
             else:
+                self["statusbar"].setText("")
                 startImport()
         except Exception as e:
             print("[EPGImport] Error at start:", e)
