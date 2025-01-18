@@ -9,7 +9,7 @@ import re
 import time
 
 from .filterCustomChannel import filterCustomChannel
-from . import log
+# from . import log
 
 try:
     import cPickle as pickle

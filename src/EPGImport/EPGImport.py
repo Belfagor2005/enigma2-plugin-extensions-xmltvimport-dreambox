@@ -39,12 +39,6 @@ except:
     pythonVer = 2
 
 
-# Funzione alternativa per random.choices
-def random_choices(population, k=1):
-    if hasattr(random, 'choices'):  # Se random.choices è disponibile (Python 3.6+)
-        return random.choices(population, k=k)
-    else:  # Compatibilità con Python 2 (o versioni precedenti di Python 3)
-        return [random.choice(population) for _ in range(k)]
 
 
 try:
@@ -214,42 +208,61 @@ class EPGImport:
             return ServerStatusList[dirname]
         else:
             # Server not in the list so checking it
-            try:
-                response = req.open(FullString, timeout=5)
-            except HTTPError as e:
-                print('[EPGImport][checkValidServer] HTTPError in checkValidServer= ' + str(e.code))
-                dlderror = 1
-            except URLError as e:
-                print('[EPGImport][checkValidServer] URLError in checkValidServer= ' + str(e.reason))
-                dlderror = 1
-            except HTTPException as e:
-                print('[EPGImport][checkValidServer] HTTPException in checkValidServer', e)
-                dlderror = 1
-            except Exception:
-                print('[EPGImport][checkValidServer] Generic exception in checkValidServer')
-                dlderror = 1
-
-            if not dlderror:
-                LastTime = response.read()
-                if isinstance(LastTime, bytes):  # Verifica se è un oggetto bytes
-                    LastTime = LastTime.decode("utf-8", "ignore").strip('\n')  # Decodifica i bytes in stringa
+            if pythonVer == 2:
                 try:
-                    FileDate = datetime.strptime(LastTime, date_format)
-                except ValueError:
-                    print("[EPGImport][checkValidServer] checkValidServer wrong date format in file rejecting server %s" % dirname)
-                    ServerStatusList[dirname] = 0
-                    response.close()
-                    return ServerStatusList[dirname]
-                delta = (now - FileDate).days
-                if delta <= alloweddelta:
-                    ServerStatusList[dirname] = 1
-                else:
-                    print("[EPGImport][checkValidServer] checkValidServer rejected server delta days too high: %s" % dirname)
-                    ServerStatusList[dirname] = 0
-                response.close()
+                    response = req.open(FullString, timeout=5)
+                except HTTPError as e:
+                    print('[EPGImport][checkValidServer] HTTPError in checkValidServer= ' + str(e.code))
+                    dlderror = 1
+                except URLError as e:
+                    print('[EPGImport][checkValidServer] URLError in checkValidServer= ' + str(e.reason))
+                    dlderror = 1
+                except HTTPException as e:
+                    print('[EPGImport][checkValidServer] HTTPException in checkValidServer', e)
+                    dlderror = 1
+                except Exception:
+                    print('[EPGImport][checkValidServer] Generic exception in checkValidServer')
+                    dlderror = 1
+
             else:
-                print("[EPGImport][checkValidServer] checkValidServer rejected server download error for: %s" % dirname)
+
+                try:
+                    response = req.open(FullString)
+                except HTTPError as e:
+                    print('[EPGImport] HTTPError in checkValidServer= ' + str(e.code))
+                    dlderror = 1
+                except URLError as e:
+                    print('[EPGImport] URLError in checkValidServer= ' + str(e.reason))
+                    dlderror = 1
+                except Exception:
+                    print('[EPGImport] Generic exception in checkValidServer')
+                    dlderror = 1
+
+        if not dlderror:
+            LastTime = response.read().strip('\n')
+            if isinstance(LastTime, bytes):
+                LastTime = LastTime.decode("utf-8", "ignore").strip('\n')  # Decodifica i bytes in stringa
+            try:
+                FileDate = datetime.strptime(LastTime, date_format)
+            except ValueError:
+                print("[EPGImport] checkValidServer wrong date format in file rejecting server %s" % dirname, file=log)
                 ServerStatusList[dirname] = 0
+                response.close()
+                return ServerStatusList[dirname]
+
+            delta = (now - FileDate).days
+            if delta <= alloweddelta:
+                # OK the delta is in the foreseen windows
+                ServerStatusList[dirname] = 1
+            else:
+                # Sorry the delta is higher removing this site
+                print("[EPGImport] checkValidServer rejected server delta days too high: %s" % dirname, file=log)
+                ServerStatusList[dirname] = 0
+                response.close()
+        else:
+            # We need to exclude this server
+            print("[EPGImport] checkValidServer rejected server download error for: %s" % dirname, file=log)
+            ServerStatusList[dirname] = 0
         return ServerStatusList[dirname]
 
     def beginImport(self, longDescUntil=None):
@@ -259,7 +272,7 @@ class EPGImport:
         elif hasattr(self.epgcache, 'importEvent'):
             self.storage = OudeisImporter(self.epgcache)
         else:
-            print("[EPGImport][beginImport] oudeis patch not detected, using epg.dat instead.")
+            print('[EPGImport][beginImport] oudeis patch not detected, using epg.dat instead.')
             from . import epgdat_importer
             self.storage = epgdat_importer.epgdatclass()
         self.eventCount = 0
@@ -323,11 +336,6 @@ class EPGImport:
 
     def afterDownload(self, result, filename, deleteFile=False):
         print("[EPGImport] afterDownload", filename, file=log)
-        """
-        if not os.path.exists(filename):
-            self.downloadFail("File not exists")
-            return
-        """
         try:
             if not os.path.getsize(filename):
                 print("File is empty")
@@ -365,7 +373,7 @@ class EPGImport:
                 self.fd.read(10)
                 self.fd.seek(0, 0)
             except Exception as e:
-                print("[EPGImport][afterDownload] File downloaded is not a valid xz file", filename, file=log)
+                print("[EPGImport] File downloaded is not a valid xz file", filename, file=log)
                 self.downloadFail(e)
                 return
 
@@ -373,10 +381,10 @@ class EPGImport:
             self.fd = open(filename, 'rb')
         if deleteFile and self.source.parser != 'epg.dat':
             try:
-                print("[EPGImport][afterDownload] unlink", filename, file=log)
+                print("[EPGImport] unlink", filename, file=log)
                 os.unlink(filename)
             except Exception as e:
-                print("[EPGImport][afterDownload] warning: Could not remove '%s' intermediate" % filename, e, file=log)
+                print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e, file=log)
 
         self.channelFiles = self.source.channels.downloadables()
         if not self.channelFiles:
@@ -424,22 +432,19 @@ class EPGImport:
             if data is not None:
                 self.eventCount += 1
                 try:
-                    if len(data) >= 2:
-                        r, d = data
-                        if d[0] > self.longDescUntil:
-                            # Remove long description (save RAM memory)
-                            d = d[:4] + ('',) + d[5:]
-                        self.storage.importEvents(r, (d,))
-                    else:
-                        print("[EPGImport][doRead] Warning: tuple data has less than 2 elements", file=log)
+                    r, d = data
+                    if d[0] > self.longDescUntil:
+                        # Remove long description (save RAM memory)
+                        d = d[:4] + ('',) + d[5:]
+                    self.storage.importEvents(r, (d,))
                 except Exception as e:
-                    print("[EPGImport][doThreadRead] ### importEvents exception:", e, file=log)
-        print("[EPGImport][doThreadRead] ### thread is ready ### Events:", self.eventCount, file=log)
+                    print("[EPGImport] ### importEvents exception:", e, file=log)
+        print("[EPGImport] ### thread is ready ### Events:", self.eventCount, file=log)
         if filename:
             try:
                 os.unlink(filename)
             except Exception as e:
-                print("[EPGImport][doThreadRead] warning: Could not remove '%s' intermediate" % filename, e, file=log)
+                print("[EPGImport] warning: Could not remove '%s' intermediate" % filename, e, file=log)
 
         return
 
@@ -447,22 +452,19 @@ class EPGImport:
         """called from reactor to read some data"""
         try:
             # returns tuple (ref, data) or None when nothing available yet.
+            # data = self.iterator.next()
             data = next(self.iterator)
 
             if data is not None:
                 self.eventCount += 1
                 try:
-                    # Make sure that date has at least 2 elements
-                    if len(data) >= 2:
-                        r, d = data
-                        if d[0] > self.longDescUntil:
-                            # Remove long description (save RAM memory)
-                            d = d[:4] + ('',) + d[5:]
-                        self.storage.importEvents(r, (d,))
-                    else:
-                        print("[EPGImport][doRead] Warning: tuple data has less than 2 elements", file=log)
+                    r, d = data
+                    if d[0] > self.longDescUntil:
+                        # Remove long description (save RAM memory)
+                        d = d[:4] + ('',) + d[5:]
+                    self.storage.importEvents(r, (d,))
                 except Exception as e:
-                    print("[EPGImport][doRead] importEvents exception:", e, file=log)
+                    print("[EPGImport] importEvents exception:", e, file=log)
 
         except StopIteration:
             self.nextImport()
@@ -472,13 +474,12 @@ class EPGImport:
     def connectionLost(self, failure):
         """called from reactor on lost connection"""
         # This happens because enigma calls us after removeReader
-        print("[EPGImport][connectionLost]", failure, file=log)
+        print("[EPGImport] connectionLost", failure, file=log)
 
     def channelDownloadFail(self, failure):
-        print("[EPGImport][connectionLost]download channel failed:", failure, file=log)
+        print("[EPGImport] download channel failed:", failure, file=log)
         if self.channelFiles:
             filename = random.choice(self.channelFiles)
-            # filename = random_choices(self.channelFiles)
             self.channelFiles.remove(filename)
             self.do_download(filename, self.afterChannelDownload, self.channelDownloadFail)
         else:
@@ -486,12 +487,11 @@ class EPGImport:
             self.nextImport()
 
     def downloadFail(self, failure):
-        print("[EPGImport][DownloadFail]download failed:", failure, file=log)
+        print("[EPGImport] download failed:", failure, file=log)
         self.source.urls.remove(self.source.url)
         if self.source.urls:
-            print("[EPGImport][DownloadFail]Attempting alternative URL", file=log)
+            print("[EPGImport] Attempting alternative URL", file=log)
             self.source.url = random.choice(self.source.urls)
-            # self.source.url = random_choices(self.source.urls)
             self.fetchUrl(self.source.url)
         else:
             self.nextImport()
@@ -548,10 +548,13 @@ class EPGImport:
         return self.source is not None
 
     def legacyDownload(self, result, afterDownload, downloadFail, sourcefile, filename, deleteFile=True):
+
         print("[EPGImport] IPv6 download failed, falling back to IPv4: " + str(sourcefile), file=log)
+
         if sourcefile.startswith("https") and sslverify:
             parsed_uri = urlparse(sourcefile)
             domain = parsed_uri.hostname
+
             # check for redirects
             try:
                 import requests
@@ -559,6 +562,7 @@ class EPGImport:
                 newurl = r.url
                 domain = urlparse(newurl).hostname
                 newurl = str(newurl)
+
             except Exception as e:
                 print(e)
 
@@ -586,7 +590,9 @@ class EPGImport:
         # Keep sensible extension, in particular the compression type
         if ext and len(ext) < 6:
             filename += ext
+
         sourcefile = str(sourcefile)
+
         print("[EPGImport][do_download] Downloading: " + str(sourcefile) + " to local path: " + str(filename), file=log)
 
         ip6 = sourcefile6 = None
@@ -597,35 +603,36 @@ class EPGImport:
                 ip6 = getaddrinfo(host, 0, AF_INET6)
                 sourcefile6 = sourcefile.replace(host, '[' + list(ip6)[0][4][0] + ']')
             except Exception as e:
-                print("[EPGImport][do_download] IPv6 not available: " + str(e))
-        sslcf = SNIFactory(sourcefile) if sourcefile.startswith('https:') else None
+                print("[EPGImport][do_download] IPv6 non disponibile: " + str(e))
 
         if ip6:
-            print("[EPGImport][do_download] Trying IPv6 first: " + sourcefile6)
+            print("[EPGImport][do_download] Trying IPv6 first: " + str(sourcefile6), file=log)
             if pythonVer == 3:
                 sourcefile6 = sourcefile6.encode()
-            downloadPage(sourcefile6, filename, contextFactory=sslcf).addCallback(afterDownload, filename, True).addErrback(self.legacyDownload, afterDownload, downloadFail, sourcefile, filename, True)
+            downloadPage(sourcefile6, filename, headers={'host': host}).addCallback(afterDownload, filename, True).addErrback(self.legacyDownload, afterDownload, downloadFail, sourcefile, filename, True)
 
         else:
             print("[EPGImport][do_download] No IPv6, using IPv4 directly: " + str(sourcefile), file=log)
             if sourcefile.startswith("https") and sslverify:
+                parsed_uri = urlparse(sourcefile)
+                domain = parsed_uri.hostname
+
+                # check for redirects
                 try:
-                    # Controlla i redirect con `requests`
                     import requests
                     r = requests.get(sourcefile, stream=True, timeout=10, verify=False, allow_redirects=True)
-                    sourcefile = r.url
-                    print("[EPGImport] URL aggiornato dopo redirect: " + sourcefile)
+                    newurl = r.url
+                    domain = urlparse(newurl).hostname
+                    newurl = str(newurl)
+
                 except Exception as e:
                     print("[EPGImport][do_download] Errore durante il controllo dei redirect: " + str(e))
 
-                parsed_uri = urlparse(sourcefile)
-                domain = parsed_uri.hostname
                 sniFactory = SNIFactory(domain)
                 if pythonVer == 3:
-                    sourcefile = sourcefile.encode()
+                    newurl = newurl.encode()
 
-                downloadPage(sourcefile, filename, contextFactory=sniFactory).addCallbacks(afterDownload, downloadFail, callbackArgs=(filename, True))
-
+                downloadPage(newurl, filename, sniFactory).addCallbacks(afterDownload, downloadFail, callbackArgs=(filename, True))
             else:
                 if pythonVer == 3:
                     sourcefile = sourcefile.encode()

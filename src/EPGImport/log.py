@@ -26,7 +26,7 @@ def write(data):
             logfile.seek(0)
             logfile.truncate(0)  # Clear the buffer
         logfile.write(data)
-        logfile.write('\n')
+        # logfile.write('\n')
     sys.stdout.write(data)
 
 

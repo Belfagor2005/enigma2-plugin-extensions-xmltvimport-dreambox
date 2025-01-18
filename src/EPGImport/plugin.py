@@ -335,6 +335,8 @@ def startImport():
         epgimport.beginImport(longDescUntil=config.plugins.epgimport.longDescDays.value * 24 * 3600 + time.time())
     else:
         print("[startImport] Already running, won't start again")
+
+
 FHD = True if getDesktop(0).size().width() == 1920 else False
 
 
@@ -474,7 +476,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
         self.cfg_showinmainmenu = getConfigListEntry(_("Show \"EPGimport\" in epg menu"), self.EPG.showinmainmenu, _("Display a shortcut \"EPG import\" in your STB epg menu screen. This allows you to access the configuration."))
         self.cfg_showinextensions = getConfigListEntry(_("Show \"EPGimport now\" in extensions"), self.EPG.showinextensions, _("Display a shortcut \"EPG import now\" in the extension menu. This menu entry will immediately start the EPG update process when selected."))
         self.cfg_showinplugins = getConfigListEntry(_("Show \"EPGImport\" in plugins"), self.EPG.showinplugins, _("Display a shortcut \"EPG import\" in the plugins browser."))
-        
+
         self.cfg_longDescDays = getConfigListEntry(dx + _("Load long descriptions up to X days"), self.EPG.longDescDays, _("Define the number of days that you want to get the full EPG data, reducing this number can help you to save memory usage on your box. But you are also limited with the EPG provider available data. You will not have 15 days EPG if it only provide 7 days data."))
         self.cfg_parse_autotimer = getConfigListEntry(dx + _("Run AutoTimer after import"), self.EPG.parse_autotimer, _("You can start automatically the plugin AutoTimer after the EPG data update to have it refreshing its scheduling after EPG data refresh."))
         self.cfg_clear_oldepg = getConfigListEntry(dx + _("Clearing current EPG before import"), config.plugins.epgimport.clear_oldepg, _("This will clear the current EPG data in memory before updating the EPG data. This allows you to always have a clean new EPG with the latest EPG data, for example in case of program changes between refresh, otherwise EPG data are cumulative."))
@@ -1350,7 +1352,7 @@ class AutoStartTimer:
 
     def getWakeTime(self):
         if config.plugins.epgimport.enabled.value:
-            self.clock = config.plugins.epgimport.wakeup.value                                                              
+            self.clock = config.plugins.epgimport.wakeup.value
             now = time.time()
             now = time.localtime(now)
             return int(time.mktime((now.tm_year, now.tm_mon, now.tm_mday, self.clock[0], self.clock[1], lastMACbyte() // 5, 0, now.tm_yday, now.tm_isdst)))
@@ -1643,29 +1645,6 @@ config.plugins.epgimport.showinextensions.addNotifier(setExtensionsmenu, initial
 extDescriptor = PluginDescriptor(name=_("EPGimport now"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=start_import)
 # extDescriptor = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu)
 pluginlist = PluginDescriptor(name=_("EPGImport"), description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon='plugin.png', fnc=main)
-
-
-# def epgmenu(menuid, **kwargs):
-    # if getImageDistro() in ("openvix", "openbh", "ventonsupport", "egami", "openhdf", "opendroid"):
-        # if menuid == "epg":
-            # return [(_("EPGImport"), main, "epgimporter", 1002)]
-        # else:
-            # return []
-    # elif getImageDistro() in ("openatv"):
-        # if menuid == "epg":
-            # return [(_("EPGImport"), main, "epgimporter", None)]
-        # else:
-            # return []
-    # elif getImageDistro() in ("teamblue"):
-        # if menuid == "epg_menu":
-            # return [(_("EPGImport"), main, "epgimporter", 95)]
-        # else:
-            # return []
-    # else:
-        # if menuid == "setup":
-            # return [(_("EPGImport"), main, "epgimporter", 1002)]
-        # else:
-            # return []
 
 
 def epgmenu(menuid, **kwargs):

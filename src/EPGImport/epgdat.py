@@ -205,7 +205,7 @@ class epgdat_class:
             # prepare and write CHANNEL INFO record
             ssid = service.split(":")
             # write CHANNEL INFO record (sid, onid, tsid, eventcount)
-            self.EPG_TMP_FD.write(self.s_IIII.pack( \
+            self.EPG_TMP_FD.write(self.s_IIII.pack(sid, onid, tsid, event_count))
             if len(ssid) < 6:
                 continue
 

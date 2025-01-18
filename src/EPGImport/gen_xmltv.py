@@ -37,7 +37,8 @@ def new():
 class Gen_Xmltv():
     def iterator(self, fd, channelsDict, offset=0):
         try:
-            xmltv_parser = xmltvconverter.XMLTVConverter(channelsDict, gen_categories, date_format, offset)
+            # xmltv_parser = xmltvconverter.XMLTVConverter(channelsDict, gen_categories, date_format, offset)
+            xmltv_parser = xmltvconverter.XMLTVConverter(channelsDict, gen_categories, date_format)
             for r in xmltv_parser.enumFile(fd):
                 yield r
         except Exception as e:
