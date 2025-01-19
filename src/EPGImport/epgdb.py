@@ -3,7 +3,7 @@ from __future__ import division
 
 from os import path as os_path, remove as os_remove
 import time
-from datetime import datetime
+# from datetime import datetime
 from enigma import eEPGCache, cachestate
 from ServiceReference import ServiceReference
 from sqlite3 import dbapi2 as sqlite
@@ -16,7 +16,6 @@ ENDC = '\033[m'
 
 def cprint(text):
     print(GREENC + "[EPGDB] " + text + ENDC)
-
 
 
 class epgdb_class:
