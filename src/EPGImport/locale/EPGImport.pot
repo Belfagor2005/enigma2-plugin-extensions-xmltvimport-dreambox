@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-18 14:01+0100\n"
+"POT-Creation-Date: 2024-12-17 20:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,365 +30,345 @@ msgstr ""
 "X-Poedit-SearchPath-10: plugin.py\n"
 "X-Poedit-SearchPath-11: xmltvconverter.py\n"
 
-#: filtersServices.py:178
+#: filtersServices.py:151
 msgid "Add Provider"
 msgstr ""
 
-#: filtersServices.py:179
+#: filtersServices.py:152
 msgid "Add Channel"
 msgstr ""
 
-#: filtersServices.py:181
-msgid "press OK to save list"
-msgstr ""
-
-#: filtersServices.py:195
+#: filtersServices.py:163
 msgid "Ignore services list(press OK to save)"
 msgstr ""
 
-#: filtersServices.py:224
+#: filtersServices.py:192
 msgid "Really delete all list?"
 msgstr ""
 
-#: filtersServices.py:257
+#: filtersServices.py:225
 msgid "Delete selected"
 msgstr ""
 
-#: filtersServices.py:258
+#: filtersServices.py:226
 msgid "Delete all"
 msgstr ""
 
-#: filtersServices.py:300
+#: filtersServices.py:251
 msgid "Channel Selection"
 msgstr ""
 
-#: filtersServices.py:308
+#: filtersServices.py:259
 msgid "All services provider"
 msgstr ""
 
-#: filtersServices.py:327 plugin.py:767
+#: filtersServices.py:278 plugin.py:609
 msgid "Select action"
 msgstr ""
 
-#: plugin.py:107
+#: plugin.py:87
 msgid "always"
 msgstr ""
 
-#: plugin.py:108
+#: plugin.py:88
 msgid "only manual boot"
 msgstr ""
 
-#: plugin.py:109
+#: plugin.py:89
 msgid "only automatic boot"
 msgstr ""
 
-#: plugin.py:110
+#: plugin.py:90
 msgid "never"
 msgstr ""
 
-#: plugin.py:116
+#: plugin.py:97
 msgid "wake up and import"
 msgstr ""
 
-#: plugin.py:117
+#: plugin.py:98
 msgid "skip the import"
 msgstr ""
 
-#: plugin.py:142
+#: plugin.py:101
+msgid "checking service reference(default)"
+msgstr ""
+
+#: plugin.py:102
+msgid "only IPTV channels"
+msgstr ""
+
+#: plugin.py:103
+msgid "all channels"
+msgstr ""
+
+#: plugin.py:118
 msgid "Press OK"
 msgstr ""
 
-#: plugin.py:157
+#: plugin.py:126
 msgid "Monday"
 msgstr ""
 
-#: plugin.py:158
+#: plugin.py:127
 msgid "Tuesday"
 msgstr ""
 
-#: plugin.py:159
+#: plugin.py:128
 msgid "Wednesday"
 msgstr ""
 
-#: plugin.py:160
+#: plugin.py:129
 msgid "Thursday"
 msgstr ""
 
-#: plugin.py:161
+#: plugin.py:130
 msgid "Friday"
 msgstr ""
 
-#: plugin.py:162
+#: plugin.py:131
 msgid "Saturday"
 msgstr ""
 
-#: plugin.py:163
+#: plugin.py:132
 msgid "Sunday"
 msgstr ""
 
-#: plugin.py:392
+#: plugin.py:346
 msgid "EPG Import Configuration"
 msgstr ""
 
-#: plugin.py:395 plugin.py:817 plugin.py:1101
+#: plugin.py:349 plugin.py:645 plugin.py:722
 msgid "Cancel"
 msgstr ""
 
-#: plugin.py:396 plugin.py:818 plugin.py:1102 plugin.py:1177
+#: plugin.py:350 plugin.py:646 plugin.py:723 plugin.py:783
 msgid "Save"
 msgstr ""
 
-#: plugin.py:397
+#: plugin.py:351
 msgid "Manual"
 msgstr ""
 
-#: plugin.py:398
+#: plugin.py:352
 msgid "Sources"
 msgstr ""
 
-#: plugin.py:425
+#: plugin.py:371
 #, python-format
 msgid ""
 "Filtering: %s\n"
 "Please wait!"
 msgstr ""
 
-#: plugin.py:426
+#: plugin.py:372
 #, python-format
 msgid ""
 "Importing: %s\n"
 "%s events"
 msgstr ""
 
-#: plugin.py:469
+#: plugin.py:400
 msgid "Automatic import EPG"
 msgstr ""
 
-#: plugin.py:469
+#: plugin.py:400
 msgid "When enabled, it allows you to schedule an automatic EPG update at the given days and time."
 msgstr ""
 
-#: plugin.py:471
+#: plugin.py:401
 msgid "Path DB EPG"
 msgstr ""
 
-#: plugin.py:471
-msgid "Specify the path folder for save EPG.dat file."
-msgstr ""
-
-#: plugin.py:472
+#: plugin.py:402
 msgid "Automatic start time"
 msgstr ""
 
-#: plugin.py:472
+#: plugin.py:402
 msgid "Specify the time for the automatic EPG update."
 msgstr ""
 
-#: plugin.py:473
+#: plugin.py:403
 msgid "When in deep standby"
 msgstr ""
 
-#: plugin.py:473
+#: plugin.py:403
 msgid "Choose the action to perform when the box is in deep standby and the automatic EPG update should normally start."
 msgstr ""
 
-#: plugin.py:474
+#: plugin.py:404
 msgid "Return to deep standby after import"
 msgstr ""
 
-#: plugin.py:474
+#: plugin.py:404
 msgid "This will turn back waked up box into deep-standby after automatic EPG import."
 msgstr ""
 
-#: plugin.py:475
+#: plugin.py:405
 msgid "Standby at startup"
 msgstr ""
 
-#: plugin.py:475
+#: plugin.py:405
 msgid "The waked up box will be turned into standby after automatic EPG import wake up."
 msgstr ""
 
-#: plugin.py:476
+#: plugin.py:406
 msgid "Choice days for start import"
 msgstr ""
 
-#: plugin.py:476
+#: plugin.py:406
 msgid "You can select the day(s) when the EPG update must be performed."
 msgstr ""
 
-#: plugin.py:477
+#: plugin.py:407
 msgid "Start import after booting up"
 msgstr ""
 
-#: plugin.py:477
+#: plugin.py:407
 msgid "Specify in which case the EPG must be automatically updated after the box has booted."
 msgstr ""
 
-#: plugin.py:478
+#: plugin.py:408
 msgid "Load EPG only services in bouquets"
 msgstr ""
 
-#: plugin.py:478
+#: plugin.py:408
 msgid "To save memory you can decide to only load EPG data for the services that you have in your bouquet files."
 msgstr ""
 
-#: plugin.py:479
-msgid "Load EPG only for IPTV channels"
+#: plugin.py:409
+msgid "Load EPG"
 msgstr ""
 
-#: plugin.py:479
-msgid "Load EPG only for IPTV channels."
+#: plugin.py:409
+msgid "Select load EPG mode for services."
 msgstr ""
 
-#: plugin.py:481
+#: plugin.py:410
 msgid "Consider setting \"Days Profile\""
 msgstr ""
 
-#: plugin.py:481
+#: plugin.py:410
 msgid "When you decide to import the EPG after the box booted mention if the \"days profile\" must be take into consideration or not."
 msgstr ""
 
-#: plugin.py:482
+#: plugin.py:411
 msgid "Skip import on restart GUI"
 msgstr ""
 
-#: plugin.py:482
+#: plugin.py:411
 msgid "When you restart the GUI you can decide to skip or not the EPG data import."
 msgstr ""
 
-#: plugin.py:483
-msgid "Load long descriptions up to X days"
+#: plugin.py:412
+msgid "Show \"EPG import now\" in extensions"
 msgstr ""
 
-#: plugin.py:483
-msgid "Define the number of days that you want to get the full EPG data, reducing this number can help you to save memory usage on your box. But you are also limited with the EPG provider available data. You will not have 15 days EPG if it only provide 7 days data."
-msgstr ""
-
-#: plugin.py:484
-msgid "Run AutoTimer after import"
-msgstr ""
-
-#: plugin.py:484
-msgid "You can start automatically the plugin AutoTimer after the EPG data update to have it refreshing its scheduling after EPG data refresh."
-msgstr ""
-
-#: plugin.py:485
-msgid "Clearing current EPG before import"
-msgstr ""
-
-#: plugin.py:485
-msgid "This will clear the current EPG data in memory before updating the EPG data. This allows you to always have a clean new EPG with the latest EPG data, for example in case of program changes between refresh, otherwise EPG data are cumulative."
-msgstr ""
-
-#: plugin.py:486
-msgid "Also apply \"channel id\" filtering on custom.channels.xml"
-msgstr ""
-
-#: plugin.py:486
-msgid "This is for advanced users that are using the channel id filtering feature. If enabled, the filter rules defined into /etc/epgimport/channel_id_filter.conf will also be applied on your /etc/epgimport/custom.channels.xml file."
-msgstr ""
-
-#: plugin.py:487
-msgid "Execute shell command before import EPG"
-msgstr ""
-
-#: plugin.py:487
-msgid "When enabled, then you can run the desired script before starting the import, after which the import of the EPG will begin."
-msgstr ""
-
-#: plugin.py:488
-msgid "Shell command name"
-msgstr ""
-
-#: plugin.py:488
-msgid "Enter shell command name."
-msgstr ""
-
-#: plugin.py:489
-msgid "Start import after standby"
-msgstr ""
-
-#: plugin.py:489
-msgid "Start import after resuming from standby mode."
-msgstr ""
-
-#: plugin.py:490
-msgid "Hours after which the import is repeated"
-msgstr ""
-
-#: plugin.py:490
-msgid "Number of hours (1-23, or 0 for no repeat) after which the import is repeated. This value is not saved and will be reset when the GUI restarts."
-msgstr ""
-
-#: plugin.py:492
-msgid "Show \"EPGimport\" in epg menu"
-msgstr ""
-
-#: plugin.py:492
-msgid "Display a shortcut \"EPG import\" in your STB epg menu screen. This allows you to access the configuration."
-msgstr ""
-
-#: plugin.py:493
-msgid "Show \"EPGimport now\" in extensions"
-msgstr ""
-
-#: plugin.py:493
+#: plugin.py:412
 msgid "Display a shortcut \"EPG import now\" in the extension menu. This menu entry will immediately start the EPG update process when selected."
 msgstr ""
 
-#: plugin.py:494
-msgid "Show \"EPGImport\" in plugins"
+#: plugin.py:413
+msgid "Show \"EPG import\" in epg menu"
 msgstr ""
 
-#: plugin.py:494
-msgid "Display a shortcut \"EPG import\" in the plugins browser."
+#: plugin.py:413
+msgid "Display a shortcut \"EPG import\" in your STB epg menu screen. This allows you to access the configuration."
 msgstr ""
 
-#: plugin.py:570
+#: plugin.py:414
+msgid "Load long descriptions up to X days"
+msgstr ""
+
+#: plugin.py:414
+msgid "Define the number of days that you want to get the full EPG data, reducing this number can help you to save memory usage on your box. But you are also limited with the EPG provider available data. You will not have 15 days EPG if it only provide 7 days data."
+msgstr ""
+
+#: plugin.py:415
+msgid "Run AutoTimer after import"
+msgstr ""
+
+#: plugin.py:415
+msgid "You can start automatically the plugin AutoTimer after the EPG data update to have it refreshing its scheduling after EPG data refresh."
+msgstr ""
+
+#: plugin.py:416
+msgid "Clearing current EPG before import"
+msgstr ""
+
+#: plugin.py:416
+msgid "This will clear the current EPG data in memory before updating the EPG data. This allows you to always have a clean new EPG with the latest EPG data, for example in case of program changes between refresh, otherwise EPG data are cumulative."
+msgstr ""
+
+#: plugin.py:417
+msgid "Also apply \"channel id\" filtering on custom.channels.xml"
+msgstr ""
+
+#: plugin.py:417
+msgid "This is for advanced users that are using the channel id filtering feature. If enabled, the filter rules defined into /etc/epgimport/channel_id_filter.conf will also be applied on your /etc/epgimport/custom.channels.xml file."
+msgstr ""
+
+#: plugin.py:418
+msgid "Execute shell command before import EPG"
+msgstr ""
+
+#: plugin.py:418
+msgid "When enabled, then you can run the desired script before starting the import, after which the import of the EPG will begin."
+msgstr ""
+
+#: plugin.py:419
+msgid "Shell command name"
+msgstr ""
+
+#: plugin.py:419
+msgid "Enter shell command name."
+msgstr ""
+
+#: plugin.py:420
+msgid "Start import after standby"
+msgstr ""
+
+#: plugin.py:420
+msgid "Start import after resuming from standby mode."
+msgstr ""
+
+#: plugin.py:421
+msgid "Hours after which the import is repeated"
+msgstr ""
+
+#: plugin.py:421
+msgid "Number of hours (1-23, or 0 for no repeat) after which the import is repeated. This value is not saved and will be reset when the GUI restarts."
+msgstr ""
+
+#: plugin.py:482
 msgid "Really close without saving settings?"
 msgstr ""
 
-#: plugin.py:598
+#: plugin.py:510
 msgid "Settings saved successfully !"
 msgstr ""
 
-#: plugin.py:644
-msgid "Choose Directory:"
-msgstr ""
-
-#: plugin.py:645
-msgid "Choose directory"
-msgstr ""
-
-#: plugin.py:675
-msgid "SELECT YOUR CHOICE"
-msgstr ""
-
-#: plugin.py:710
-msgid "unknown"
-msgstr ""
-
-#: plugin.py:711
+#: plugin.py:553
 #, python-format
 msgid "Last: %s %s, %d events"
 msgstr ""
 
-#: plugin.py:716
+#: plugin.py:557
 #, python-format
 msgid "Last import: %s events"
 msgstr ""
 
-#: plugin.py:721
+#: plugin.py:562
 msgid ""
 "EPGImport\n"
 "Import of epg data is still in progress. Please wait."
 msgstr ""
 
-#: plugin.py:732
+#: plugin.py:573
 msgid "No active EPG sources found, nothing to do"
 msgstr ""
 
-#: plugin.py:737
+#: plugin.py:578
 msgid ""
 "EPGImport\n"
 "Import of epg data will start.\n"
@@ -396,83 +376,59 @@ msgid ""
 "Is this ok?"
 msgstr ""
 
-#: plugin.py:750
+#: plugin.py:590
 msgid ""
 "EPGImport Plugin\n"
 "Failed to start:\n"
 msgstr ""
 
-#: plugin.py:766
+#: plugin.py:606
 msgid "Show log"
 msgstr ""
 
-#: plugin.py:766
+#: plugin.py:608
 msgid "Ignore services list"
 msgstr ""
 
-#: plugin.py:816
+#: plugin.py:644
 msgid "EPG Import Sources"
 msgstr ""
 
-#: plugin.py:819
+#: plugin.py:668
 msgid "Import"
 msgstr ""
 
-#: plugin.py:820
-msgid "Import from Git"
-msgstr ""
-
-#: plugin.py:868
-msgid "Do you want to update Source now?"
-msgstr ""
-
-#: plugin.py:900
-msgid "Source files Imported!"
-msgstr ""
-
-#: plugin.py:908
-msgid "Update Aborted!"
-msgstr ""
-
-#: plugin.py:966
-msgid "Source files Imported and List Updated!"
-msgstr ""
-
-#: plugin.py:1062
-msgid "EPG database was emptied"
-msgstr ""
-
-#: plugin.py:1096 plugin.py:1117
+#: plugin.py:717 plugin.py:733
 msgid "Days Profile"
 msgstr ""
 
-#: plugin.py:1127
+#: plugin.py:743
 msgid ""
 "You may not use this settings!\n"
 "At least one day a week should be included!"
 msgstr ""
 
-#: plugin.py:1172 plugin.py:1204
+#: plugin.py:779
 msgid "EPG Import Log"
 msgstr ""
 
-#: plugin.py:1174
+#: plugin.py:780
 msgid "Clear"
 msgstr ""
 
-#: plugin.py:1226
+#: plugin.py:804
 msgid "Write to /tmp/epgimport.log"
 msgstr ""
 
-#: plugin.py:1242
+#: plugin.py:821
 msgid "Last import: "
 msgstr ""
 
-#: plugin.py:1242
+#: plugin.py:821
 msgid " events\n"
 msgstr ""
 
-#: plugin.py:1242
+#: plugin.py:821
 msgid ""
 "\n"
 "Import of epg data will start.\n"
@@ -480,29 +436,25 @@ msgid ""
 "Is this ok?"
 msgstr ""
 
-#: plugin.py:1292
+#: plugin.py:867
 #, python-format
 msgid "EPG Import finished, %d events"
 msgstr ""
 
-#: plugin.py:1292
+#: plugin.py:867
 msgid ""
 "You must restart Enigma2 to load the EPG data,\n"
 "is this OK?"
 msgstr ""
 
-#: plugin.py:1457
-msgid "No source file found !"
+#: plugin.py:1200 plugin.py:1223
+msgid "Nss EPG Import"
 msgstr ""
 
-#: plugin.py:1679
+#: plugin.py:1215
 msgid "Automated EPG Importer"
 msgstr ""
 
-#: plugin.py:1681
-msgid "EPGimport now"
-msgstr ""
-
-#: plugin.py:1683 plugin.py:1688 plugin.py:1696 plugin.py:1706
-msgid "EPGImport"
+#: plugin.py:1217
+msgid "EPG import now"
 msgstr ""
