@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
@@ -7,8 +8,8 @@ import gettext
 import os
 
 
-PluginLanguageDomain = 'EPGImport'
-PluginLanguagePath = 'Extensions/EPGImport/locale'
+PluginLanguageDomain = "EPGImport"
+PluginLanguagePath = "Extensions/EPGImport/locale"
 
 
 isDreambox = False

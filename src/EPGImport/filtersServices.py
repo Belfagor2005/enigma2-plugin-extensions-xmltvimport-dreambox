@@ -14,7 +14,7 @@ from Screens.Screen import Screen
 from ServiceReference import ServiceReference
 import os
 
-sz_w = getDesktop(0).size().width()
+FHD = True if getDesktop(0).size().width() == 1920 else False
 OFF = 0
 EDIT_BOUQUET = 1
 EDIT_ALTERNATIVES = 2
@@ -22,8 +22,8 @@ EDIT_ALTERNATIVES = 2
 
 def getProviderName(ref):
 	typestr = ref.getData(0) in (2, 10) and service_types_radio or service_types_tv
-	pos = typestr.rfind(':')
-	rootstr = '%s (channelID == %08x%04x%04x) && %s FROM PROVIDERS ORDER BY name' % (typestr[:pos + 1], ref.getUnsignedData(4), ref.getUnsignedData(2), ref.getUnsignedData(3), typestr[pos + 1:])
+	pos = typestr.rfind(":")
+	rootstr = "%s (channelID == %08x%04x%04x) && %s FROM PROVIDERS ORDER BY name" % (typestr[:pos + 1], ref.getUnsignedData(4), ref.getUnsignedData(2), ref.getUnsignedData(3), typestr[pos + 1:])
 	provider_root = eServiceReference(rootstr)
 	serviceHandler = eServiceCenter.getInstance()
 	providerlist = serviceHandler.list(provider_root)
@@ -42,7 +42,7 @@ def getProviderName(ref):
 						if service == ref:
 							info = serviceHandler.info(provider)
 							return info and info.getName(provider) or "Unknown"
-	return ''
+	return ""
 
 
 class FiltersList():
@@ -52,33 +52,29 @@ class FiltersList():
 
 	def loadFrom(self, filename):
 		try:
-			cfg = open(filename, 'r')
-		except:
-			return
-		while True:
-			line = cfg.readline()
-			if not line:
-				break
-			if line[0] in '#;\n':
-				continue
-			ref = line.strip()
-			if ref not in self.services:
-				self.services.append(ref)
-		cfg.close()
+			with open(filename, "r") as cfg:
+				for line in cfg:
+					if line[0] in "#;\n":
+						continue
+					ref = line.strip()
+					if ref not in self.services:
+						self.services.append(ref)
+		except Exception as e:
+			print("FiltersList error:", e)
 
 	def saveTo(self, filename):
 		try:
-			if not os.path.isdir('/etc/epgimport'):
-				os.system('mkdir /etc/epgimport')
-			cfg = open(filename, 'w')
+			if not os.path.isdir("/etc/epgimport"):
+				os.system("mkdir /etc/epgimport")
+			cfg = open(filename, "w")
 		except:
 			return
 		for ref in self.services:
-			cfg.write('%s\n' % (ref))
+			cfg.write("%s\n" % (ref))
 		cfg.close()
 
 	def load(self):
-		self.loadFrom('/etc/epgimport/ignore.conf')
+		self.loadFrom("/etc/epgimport/ignore.conf")
 
 	def reload(self):
 		self.services = []
@@ -88,12 +84,11 @@ class FiltersList():
 		return self.services
 
 	def save(self):
-		self.saveTo('/etc/epgimport/ignore.conf')
+		self.saveTo("/etc/epgimport/ignore.conf")
 
 	def addService(self, ref):
-		if isinstance(ref, str):
-			if ref not in self.services:
-				self.services.append(ref)
+		if isinstance(ref, str) and ref not in self.services:
+			self.services.append(ref)
 
 	def addServices(self, services):
 		if isinstance(services, list):
@@ -102,9 +97,8 @@ class FiltersList():
 					self.services.append(s)
 
 	def delService(self, ref):
-		if isinstance(ref, str):
-			if ref in self.services:
-				self.services.remove(ref)
+		if isinstance(ref, str) and ref in self.services:
+			self.services.remove(ref)
 
 	def delAll(self):
 		self.services = []
@@ -115,7 +109,7 @@ filtersServicesList = FiltersList()
 
 
 class filtersServicesSetup(Screen):
-	if sz_w >= 1920:
+	if FHD:
 		skin = """
 		<screen name="filtersServicesSetup" position="center,center" size="1200,820" title="Ignore services list">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
@@ -181,7 +175,10 @@ class filtersServicesSetup(Screen):
 		self["introduction"] = Label(_("press OK to save list"))
 		self.updateButtons()
 		self["actions"] = ActionMap(
-			["OkCancelActions", "ColorActions"],
+			[
+				"OkCancelActions",
+				"ColorActions"
+			],
 			{
 				"cancel": self.exit,
 				"ok": self.keyOk,
@@ -213,8 +210,8 @@ class filtersServicesSetup(Screen):
 			if isinstance(ref, list):
 				self.RefList.addServices(ref)
 			else:
-				refstr = ':'.join(ref.toString().split(':')[:11])
-				if any(x in refstr for x in ('1:0:', '4097:0:', '5001:0:', '5002:0:')):
+				refstr = ":".join(ref.toString().split(":")[:11])
+				if any(x in refstr for x in ("1:0:", "4097:0:", "5001:0:", "5002:0:")):
 					self.RefList.addService(refstr)
 			self.updateList()
 			self.updateButtons()
@@ -245,7 +242,7 @@ class filtersServicesSetup(Screen):
 	def updateList(self):
 		self.list = []
 		for service in self.RefList.servicesList():
-			if '1:0:' in service:
+			if any(x in service for x in ("1:0:", "4097:0:", "5001:0:", "5002:0:")):
 				provname = getProviderName(eServiceReference(service))
 				servname = ServiceReference(service).getServiceName() or "N/A"
 				self.list.append((servname, provname, service))
@@ -262,7 +259,7 @@ class filtersServicesSetup(Screen):
 
 
 class filtersServicesSelection(ChannelSelectionBase):
-	if sz_w >= 1920:
+	if FHD:
 		skin = """
 		<screen position="center,center" size="1200,820" title="Channel Selection">
 		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="295,70" />
@@ -304,7 +301,7 @@ class filtersServicesSelection(ChannelSelectionBase):
 	def channelSelected(self):
 		ref = self.getCurrentSelection()
 		if self.providers and (ref.flags & 7) == 7:
-			if 'provider' in ref.toString():
+			if "provider" in ref.toString():
 				menu = [(_("All services provider"), "providerlist")]
 
 				def addAction(choice):
@@ -318,7 +315,7 @@ class filtersServicesSelection(ChannelSelectionBase):
 									service = servicelist.getNext()
 									if not service.valid():
 										break
-									refstr = ':'.join(service.toString().split(':')[:11])
+									refstr = ":".join(service.toString().split(":")[:11])
 									providerlist.append((refstr))
 								if providerlist:
 									self.close(providerlist)
@@ -329,7 +326,7 @@ class filtersServicesSelection(ChannelSelectionBase):
 				self.enterPath(ref)
 		elif (ref.flags & 7) == 7:
 			self.enterPath(ref)
-		elif 'provider' not in ref.toString() and not self.providers and not (ref.flags & (64 | 128)) and '%3a//' not in ref.toString():
+		elif "provider" not in ref.toString() and not self.providers and not (ref.flags & (64 | 128)) and "%3a//" not in ref.toString():
 			if ref.valid():
 				self.close(ref)
 

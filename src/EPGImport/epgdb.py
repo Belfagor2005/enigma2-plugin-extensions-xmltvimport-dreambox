@@ -9,12 +9,12 @@ from Components.config import config
 from enigma import eTimer
 import time
 
-"""
-GREENC = '\033[32m'
-ENDC = '\033[m'
+GREENC = "\033[32m"
+ENDC = "\033[m"
+
+
 def cprint(text):
-	print(GREENC+"[EPGDB] " + text + ENDC)
-"""
+	print(GREENC + "[EPGDB] " + text + ENDC)
 
 
 class epgdb_class:
@@ -24,11 +24,18 @@ class epgdb_class:
 	EXCLUDED_SID = []
 	events = []
 
+	# initialize an empty dictionary (Python array)
+	# as channel events container before preprocessing
+
 	def __init__(self, provider_name, provider_priority, epgdb_path=None, clear_oldepg=False):
 		self.source_name = provider_name
 		self.priority = provider_priority
+		# get timespan time from system settings defined in days
+		# get outdated time from system settings defined in hours
 		self.epg_outdated = int(config.misc.epgcache_outdated_timespan.value)
+		# subtract the outdated time from current time
 		self.epoch_time = int(time.time()) - (self.epg_outdated * 3600)
+		# limit (timespan) the number of day to import
 		self.epg_timespan = int(config.misc.epgcache_timespan.value)
 		self.epg_cutoff_time = int(time.time()) + (self.epg_timespan * 86400)
 		self.event_counter_journal = 0
@@ -55,7 +62,7 @@ class epgdb_class:
 			self.epginstance = eEPGCache.getInstance()
 			# epg saving will notify when finished ...
 			self.cacheState_conn = self.epginstance.cacheState.connect(self.cacheStateChanged)
-			print("[EPGDB] saving EPG to %s" % self.epgdb_path)
+			cprint("[EPGDB] saving EPG to %s" % self.epgdb_path)
 			if os_path.exists(self.epgdb_path):
 				os_remove(self.epgdb_path)
 			self.size = 0
@@ -63,31 +70,31 @@ class epgdb_class:
 
 	def cacheStateChanged(self, state):
 		if state.state == cachestate.save_finished:
-			print("SAVED")
+			cprint("SAVED")
 			self.ProcessingTimer.start(5000, True)
 			# self.start_process()
 
 	def start_process(self):
-		print("START PROCESSING")
+		cprint("START PROCESSING")
 		if os_path.exists(self.epgdb_path):
 			size = os_path.getsize(self.epgdb_path)
 			# even empty epg.db has at least 23k size
 			min_size = 23 * 1024
 			if size < min_size:
-				print("%s too small" % self.epgdb_path)
+				cprint("%s too small" % self.epgdb_path)
 				return False
 			else:
 				if size != self.size:
-					print("SIZE %d >>> %d changed" % (self.size, size))
+					cprint("SIZE %d >>> %d changed" % (self.size, size))
 					self.size = size
 					self.ProcessingTimer.start(5000, True)
 					return True
 		else:
-			print("%s NOT FOUND" % self.epgdb_path)
+			cprint("%s NOT FOUND" % self.epgdb_path)
 			return False
-		print("%s SAVE FINISHED SIZE %d" % (self.epgdb_path, self.size))
+		cprint("%s SAVE FINISHED SIZE %d" % (self.epgdb_path, self.size))
 		if self.connection is not None:
-			print("%s CONNECTED ALREADY" % self.epgdb_path)
+			cprint("%s CONNECTED ALREADY" % self.epgdb_path)
 			return True
 
 		self.events_in_past_journal = 0
@@ -108,19 +115,19 @@ class epgdb_class:
 			row = self.cursor.fetchone()
 			if row is not None:
 				self.source_id = int(row[0])
-				print("FOUND %s EPG with source_id %d" % (self.source_name, self.source_id))
+				cprint("FOUND %s EPG with source_id %d" % (self.source_name, self.source_id))
 			else:   # looks like we have to add it
 				cmd = "insert into T_Source (source_name, priority) values (?, ?)"
 				self.cursor.execute(cmd, (self.source_name, self.priority))
 				self.source_id = self.cursor.lastrowid
 				self.connection.commit()
-				print("ADDED %s EPG with source_id %d" % (self.source_name, self.source_id))
+				cprint("ADDED %s EPG with source_id %d" % (self.source_name, self.source_id))
 			# begin transaction  ....
-			self.cursor.execute('BEGIN')
-			print("CONNNECT %s FINISHED" % self.epgdb_path)
+			self.cursor.execute("BEGIN")
+			cprint("CONNNECT %s FINISHED" % self.epgdb_path)
 			return True
 		except:
-			print("CONNECT %s FAILED" % self.epgdb_path)
+			cprint("CONNECT %s FAILED" % self.epgdb_path)
 			return False
 
 	def set_excludedsid(self, exsidlist):
@@ -131,14 +138,14 @@ class epgdb_class:
 
 	def preprocess_events_channel(self, services=None):
 		if self.connection is None:
-			print("NOT YET CONNECTED")
+			cprint("NOT YET CONNECTED")
 			self.size = os_path.getsize(self.epgdb_path)  # to continue immediately
 			self.start_process()
 		if services is None:
 			# reset event container
 			self.events = []
 			return
-		# print("EVENTS: %d" % len(self.events))
+		# cprint("EVENTS: %d" % len(self.events))
 		# one local cursor per table seems to perform slightly better ...
 		cursor_service = self.connection.cursor()
 		cursor_event = self.connection.cursor()
@@ -153,11 +160,11 @@ class epgdb_class:
 		# now we go through all the channels we got
 		for service in services:
 			# prepare and write CHANNEL INFO record
-			channel = ServiceReference(str(service)).getServiceName().encode('ascii', 'ignore')
+			channel = ServiceReference(str(service)).getServiceName().encode("ascii", "ignore")
 			if len(channel) == 0:
 				channel = str(service)
 			ssid = service.split(":")
-			# print("SSID %s" % ssid)
+			# cprint("SSID %s" % ssid)
 			number_of_events = len(self.events)
 			# only add channels where we have events
 			if number_of_events > 0 and len(ssid) > 6:
@@ -166,10 +173,10 @@ class epgdb_class:
 				self.tsid = int(ssid[4], 16)
 				self.onid = int(ssid[5], 16)
 				self.dvbnamespace = int(ssid[6], 16)
-				# print("%x %x %x %x" % (self.sid,self.tsid,self.onid,self.dvbnamespace))
+				# cprint("%x %x %x %x" % (self.sid,self.tsid,self.onid,self.dvbnamespace))
 				# dvb-t fix: EEEExxxx => EEEE0000
 				if self.dvbnamespace > 4008574976 and self.dvbnamespace < 4008636143:
-					# print("FIXING DVB-T")
+					# cprint("FIXING DVB-T")
 					self.dvbnamespace = 4008574976
 				if self.dvbnamespace > 2147483647:
 					self.dvbnamespace -= 4294967296
@@ -217,7 +224,7 @@ class epgdb_class:
 					self.extended_hash = eEPGCache.getStringHash(self.extended_d)
 					# generate an unique dvb event id < 65536
 					self.dvb_event_id = (self.begin_time - int(self.begin_time // 3932160) * 3932160) // 60
-					# print("dvb event id: %d" % self.dvb_event_id)
+					# cprint("dvb event id: %d" % self.dvb_event_id)
 					if self.short_hash > 2147483647:
 						self.short_hash -= 4294967296
 					if self.long_hash > 2147483647:
@@ -265,7 +272,7 @@ class epgdb_class:
 					else:
 						self.events_in_past_journal += 1
 
-			print("ADDED %d from %d events for channel %s" % (self.event_counter_journal, number_of_events, channel))
+			cprint("ADDED %d from %d events for channel %s" % (self.event_counter_journal, number_of_events, channel))
 			self.EPG_TOTAL_EVENTS += number_of_events
 
 		# reset event container
@@ -279,22 +286,22 @@ class epgdb_class:
 
 	def cancel_process(self):
 		if self.connection is None:
-			print("STILL NOT CONNECTED, sorry")
+			cprint("STILL NOT CONNECTED, sorry")
 			return
-		print("IMPORT CANCELED")
-		self.cursor.execute('END')
+		cprint("IMPORT CANCELED")
+		self.cursor.execute("END")
 		self.cursor.close()
 		self.connection.close()
 		self.connection = None
 
 	def final_process(self):
 		if self.connection is None:
-			print("STILL NOT CONNECTED, sorry")
+			cprint("STILL NOT CONNECTED, sorry")
 			return
-		print("IMPORT FINISHED and from the total available %d events %d were imported." % (self.EPG_TOTAL_EVENTS, self.events_in_import_range_journal))
-		print("%d Events were outside of the defined timespan(%d hours outdated and timespan %d days)." % (self.events_in_past_journal, self.epg_outdated, self.epg_timespan))
+		cprint("IMPORT FINISHED and from the total available %d events %d were imported." % (self.EPG_TOTAL_EVENTS, self.events_in_import_range_journal))
+		cprint("%d Events were outside of the defined timespan(%d hours outdated and timespan %d days)." % (self.events_in_past_journal, self.epg_outdated, self.epg_timespan))
 		try:
-			self.cursor.execute('END')
+			self.cursor.execute("END")
 		except:
 			pass
 		try:
@@ -303,12 +310,12 @@ class epgdb_class:
 		except:
 			pass
 		self.connection = None
-		print("WRITES EPG database ...")
+		cprint("WRITES EPG database ...")
 		epginstance = eEPGCache.getInstance()
 		eEPGCache.load(epginstance)
 
 	def create_empty(self):
-		print("EMPTY EPG database")
+		cprint("EMPTY EPG database")
 		if os_path.exists(config.misc.epgcache_filename.value):
 			os_remove(config.misc.epgcache_filename.value)
 		connection = sqlite.connect(config.misc.epgcache_filename.value, timeout=10)
@@ -344,7 +351,13 @@ class epgdb_class:
 		connection.close()
 
 	def check_epgdb(self):
-		print("CHECKS EPG database")
+		try:
+			import MySQLdb
+			print("MySQLdb presente")
+		except ImportError:
+			print("MySQLdb NON presente")
+			return
+		cprint("CHECKS EPG database")
 		text_result = ""
 		connection = sqlite.connect(config.misc.epgcache_filename.value, timeout=10)
 		connection.text_factory = str
@@ -356,9 +369,9 @@ class epgdb_class:
 			text_result = ""
 			for res in result:
 				text_result = text_result + str(res[0])
-		except Exception as e:
+		except MySQLdb.Error as e:
 			text_result = "[EPGDB] Error [%d]: %s" % (e.args[0], e.args[1])
 		cursor.close()
 		connection.close()
-		print("CHECK RESULT %s" % text_result)
+		cprint("CHECK RESULT %s" % text_result)
 		return text_result
