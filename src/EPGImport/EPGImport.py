@@ -331,6 +331,7 @@ class EPGImport:
 				print("[EPGImport][afterChannelDownload] Exception filename", filename)
 				self.channelDownloadFail(e)
 				return
+
 		if twisted.python.runtime.platform.supportsThreads():
 			print("[EPGImport][afterChannelDownload] Using twisted thread")
 			threads.deferToThread(self.doThreadRead, filename).addCallback(lambda ignore: self.nextImport())

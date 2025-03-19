@@ -132,6 +132,7 @@ def TL_hexconv(dt):
 
 
 class epgdat_class:
+	# temp files used for EPG.DAT creation
 
 	LAMEDB = '/etc/enigma2/lamedb'
 
