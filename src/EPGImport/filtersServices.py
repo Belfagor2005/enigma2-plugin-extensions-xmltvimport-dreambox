@@ -12,12 +12,13 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
-import os
-
+from os.path import isdir, join
+from os import mkdir
 FHD = True if getDesktop(0).size().width() == 1920 else False
 OFF = 0
 EDIT_BOUQUET = 1
 EDIT_ALTERNATIVES = 2
+SOURCE_PATH = "/etc/epgimport"
 
 
 def getProviderName(ref):
@@ -64,8 +65,8 @@ class FiltersList():
 
 	def saveTo(self, filename):
 		try:
-			if not os.path.isdir("/etc/epgimport"):
-				os.system("mkdir /etc/epgimport")
+			if not isdir(SOURCE_PATH):
+				mkdir(SOURCE_PATH)
 			cfg = open(filename, "w")
 		except:
 			return
@@ -74,9 +75,9 @@ class FiltersList():
 		cfg.close()
 
 	def load(self):
-		self.loadFrom("/etc/epgimport/ignore.conf")
+		self.loadFrom(join(SOURCE_PATH, "ignore.conf"))
 
-	def reload(self):
+	def reload_module(self):
 		self.services = []
 		self.load()
 
@@ -84,7 +85,7 @@ class FiltersList():
 		return self.services
 
 	def save(self):
-		self.saveTo("/etc/epgimport/ignore.conf")
+		self.saveTo(join(SOURCE_PATH, "ignore.conf"))
 
 	def addService(self, ref):
 		if isinstance(ref, str) and ref not in self.services:
@@ -230,7 +231,7 @@ class filtersServicesSetup(Screen):
 	def keyOk(self):
 		self.RefList.save()
 		if self.RefList.services != self.prev_list:
-			self.RefList.reload()
+			self.RefList.reload_module()
 			EPGConfig.channelCache = {}
 		self.close()
 

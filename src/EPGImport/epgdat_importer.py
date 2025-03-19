@@ -21,14 +21,10 @@ class epgdatclass:
 		self.data = None
 		self.services = None
 		path = tmppath
-		if self.checkPath("/media/cf"):
-			path = "/media/cf"
-		if self.checkPath("/media/mmc"):
-			path = "/media/mmc"
-		if self.checkPath("/media/usb"):
-			path = "/media/usb"
-		if self.checkPath("/media/hdd"):
-			path = "/media/hdd"
+		for p in ["/media/cf", "/media/mmc", "/media/usb", "/media/hdd"]:
+			if self.checkPath(p):
+				path = p
+				break
 		if exists("/var/lib/dpkg/status"):
 			from Components.config import config
 			self.epgdbfile = config.misc.epgcache_filename.value

@@ -9,11 +9,10 @@
 # Info corvoboys.org
 """
 
-from os import listdir, makedirs, chdir, remove, walk, sync
+from os import listdir, makedirs, chdir, remove, walk
 from os.path import join, isdir, exists
 from shutil import rmtree, copyfileobj, copytree, copy2
 import tarfile
-import urllib.request
 import ssl
 
 
@@ -101,11 +100,12 @@ def main(url):
 		remove(SETTINGS_FILE)
 
 	try:
+		from os import sync
 		sync()
 	except ImportError:
 		pass
 
 
-if __name__ == "__main__":
-	url = "https://github.com/your-repository/EPGimport-Sources/archive/main.tar.gz"
-	main(url)
+# if __name__ == "__main__":
+	# url = "https://github.com/Belfagor2005/EPGimport-Sources/archive/refs/heads/main.tar.gz"
+	# main(url)

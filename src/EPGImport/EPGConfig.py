@@ -227,9 +227,9 @@ class EPGChannel:
 						if ref and filterCallback(ref):
 							if channel_id in self.items:
 								self.items[channel_id].append(ref)
-								self.items[channel_id] = list(dict.fromkeys(self.items[channel_id]))  # Ensure uniqueness
 							else:
 								self.items[channel_id] = [ref]
+							self.items[channel_id] = list(set(self.items[channel_id]))
 						elem.clear()
 		except Exception as e:
 			log.write("[EPGImport] failed to parse %s Error: %s" % (downloadedFile, e))

@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-23 14:15+0300\n"
+"PO-Revision-Date: 2025-03-07 22:02+0100\n"
+"Last-Translator: Warder <ciksa@seznam.cz>\n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+#: plugin.py:21
+msgid "Always off"
+msgstr "Vždy vypnuto"
+
+#: plugin.py:248
+msgid "Brightness Level 1"
+msgstr "Úroveň jasu 1"
+
+#: plugin.py:249
+msgid "Brightness Level 2"
+msgstr "Úroveň jasu 2"
+
+#: plugin.py:24
+msgid "Brightness level"
+msgstr "Úroveň jasu"
+
+#: plugin.py:226
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: plugin.py:347
+msgid "Change VFD display settings"
+msgstr "Změňte nastavení zobrazení VFD"
+
+#: plugin.py:21
+msgid "Channelnumber in Standby Clock"
+msgstr "Číslo kanálu v pohotovostním režimu"
+
+#: plugin.py:21
+msgid "Channelnumber in Standby off"
+msgstr "Číslo kanálu v pohotovostním režimu vypnuto"
+
+#: plugin.py:21
+msgid "Channelnumber/Clock in Standby Clock"
+msgstr "Číslo kanálu/Hodiny v pohotovostním režimu"
+
+#: plugin.py:21
+msgid "Clock always"
+msgstr "Hodiny vždy"
+
+#: plugin.py:215
+msgid "Control 7 segment VFD display"
+msgstr "Ovládání 7 segmentového VFD displeje"
+
+#: plugin.py:24
+msgid "Off"
+msgstr "Vypnuto"
+
+#: plugin.py:24
+msgid "On/Off"
+msgstr "Zapnout/vypnout"
+
+#: plugin.py:227
+msgid "Save"
+msgstr "Uložit"
+
+#: plugin.py:244 plugin.py:262
+msgid "Show REC-Symbol in Display"
+msgstr "Zobrazit na displeji symbol REC"
+
+#: plugin.py:246 plugin.py:264
+msgid "Show blinking Clock on Display during recording"
+msgstr "Během nahrávání zobrazit na displeji blikající hodiny"
+
+#: plugin.py:241 plugin.py:260
+msgid "Show on VFD"
+msgstr "Zobrazit na VFD"
+
+#: plugin.py:243
+msgid "Time mode"
+msgstr "Časový režim"
+
+#: plugin.py:228
+msgid "Update Date/Time"
+msgstr "Aktualizovat datum/čas"
+
+#: plugin.py:311
+msgid "VFD Display Setup"
+msgstr "Nastavení zobrazení VFD"
+
+#: plugin.py:23
+msgid "no"
+msgstr "ne"
+
+#: plugin.py:23
+msgid "yes"
+msgstr "ano"
+
+msgid "24h"
+msgstr "24h"
+
+msgid "12h"
+msgstr "12h"
