@@ -30,7 +30,7 @@ from . import EPGImport
 
 EPGImport.HDD_EPG_DAT = "./epg.dat.new"
 
-""" Emulate an Enigma that has no patch whatsoever."""
+# Emulate an Enigma that has no patch whatsoever.
 
 
 class FakeEnigma:
@@ -47,7 +47,7 @@ class FakeEnigma:
 
 
 def importFrom(epgimport, sourceXml):
-	""" Hack to make this test run on Windows (where the reactor cannot handle files)"""
+	# Hack to make this test run on Windows (where the reactor cannot handle files)
 	if sys.platform.startswith("win"):
 		import twisted.python.runtime
 		twisted.python.runtime.platform.supportsThreads = lambda: False

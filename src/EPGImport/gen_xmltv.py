@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 from . import xmltvconverter
 
-
 date_format = "%Y%m%d%H%M%S"
 """ New category add from Lululla """
 gen_categories = {
@@ -128,7 +127,7 @@ class Gen_Xmltv():
 		try:
 			if not isinstance(channelsDict, dict):
 				raise ValueError("channelsDict must be a dictionary")
-			xmltv_parser = xmltvconverter.XMLTVConverter(channelsDict, gen_categories, date_format, offset)
+			xmltv_parser = xmltvconverter.XMLTVConverter(channelsDict, gen_categories, date_format)
 			for r in xmltv_parser.enumFile(fd):
 				yield r
 		except Exception as e:

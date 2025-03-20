@@ -131,7 +131,7 @@ def bigStorage(minFree, default, *candidates):
 				if free > minFree:
 					return candidate
 			except Exception as e:
-				print("[EPGImport][bigStorage] Failed to stat %s:" % default, e)
+				print("[EPGImport][bigStorage] Failed to stat", str(e))
 				continue
 	raise Exception("[EPGImport][bigStorage] Insufficient storage for download")
 
@@ -365,9 +365,7 @@ class EPGImport:
 		if not hasattr(self.epgcache, "load"):
 			print("[EPGImport][readEpgDatFile] Cannot load EPG.DAT files on unpatched enigma. Need CrossEPG patch.")
 			return
-
 		unlink_if_exists(HDD_EPG_DAT)
-
 		try:
 			if filename.endswith(".gz"):
 				print("[EPGImport][readEpgDatFile] Uncompressing", filename)
@@ -404,24 +402,17 @@ class EPGImport:
 				r, d = data
 				if len(d) >= 5:
 					if d[0] > self.longDescUntil:
-						# Remove long description (save RAM memory)
-						d = d[:4] + ("",) + d[5:]
-					# for i, item in enumerate(d):
-						# print(f"[EPGImport][doThreadRead] ### Checking item {i}: {item}, type: {type(item)}")
-
-					d = tuple(
-						int(item) if isinstance(item, (str, bytes)) and self.is_numeric(item) else  # Converte in intero se numerico
-						(item.decode('utf-8') if isinstance(item, bytes) else item)  # Decodifica i bytes in stringhe
-						for item in d
-					)
-					# # Debug: stampa la tupla d dopo le modifiche
-					# print(f"[EPGImport][doThreadRead] ### Final Event data: {d}")
-					try:
-						self.storage.importEvents(r, (d,))
-					except Exception as e:
-						print("[EPGImport][doThreadRead] ### importEvents exception:", str(e))
+						if len(d) > 5:
+							d = d[:4] + ("",) + d[5:]
+						else:
+							d = d[:4] + ("",)
 				else:
-					print("[EPGImport][doThreadRead] ### Invalid data tuple length, skipping event.")
+					print("[EPGImport][doThreadRead] ### Invalid data tuple length (expected >= 5, got", len(d), "), skipping event.")
+					continue
+				try:
+					self.storage.importEvents(r, (d,))
+				except Exception as e:
+					print("[EPGImport][doThreadRead] ### importEvents exception:", str(e))
 		print("[EPGImport][doThreadRead] ### thread is ready ### Events:", self.eventCount)
 		if filename:
 			try:
@@ -429,14 +420,6 @@ class EPGImport:
 			except Exception as e:
 				print("[EPGImport][doThreadRead] warning: Could not remove '%s' intermediate" % filename, str(e))
 		return
-
-	def is_numeric(self, value):
-		"""Check if integer value"""
-		try:
-			int(value)
-			return True
-		except ValueError:
-			return False
 
 	def doRead(self):
 		"""called from reactor to read some data"""
@@ -477,9 +460,7 @@ class EPGImport:
 			needLoad = self.storage.epgfile
 		else:
 			needLoad = None
-
 		self.storage = None
-
 		if self.eventCount is not None:
 			print("[EPGImport] imported %d events" % self.eventCount)
 			reboot = False

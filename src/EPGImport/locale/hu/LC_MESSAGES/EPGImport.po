@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-16 06:40+0000\n"
-"PO-Revision-Date: 2025-02-26 07:00+0100\n"
+"POT-Creation-Date: 2025-03-19 10:42+0100\n"
+"PO-Revision-Date: 2025-03-19 18:44+0100\n"
 "Last-Translator: Warder <ciksa@seznam.cz>\n"
 "Language-Team: \n"
 "Language: hu\n"
@@ -17,102 +17,444 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
 
-#: ../plugin.py:739
-msgid ""
-"\n"
-"Import of epg data will start.\n"
-"This may take a few minutes.\n"
-"Is this ok?"
-msgstr ""
-"\n"
-"Az epg adatok importálása megkezdődik.\n"
-"Ez néhány percet vesz igénybe.\n"
-"Kezdődhet az importálás?"
-
-#: ../plugin.py:739
-msgid " events\n"
-msgstr " műsor információk\n"
-
-#: ../filtersServices.py:153
-msgid "Add Channel"
-msgstr "Csatorna hozzáadása lehetőségre"
-
-#: ../filtersServices.py:152
+#: filtersServices.py:173
 msgid "Add Provider"
 msgstr "Szolgáltató hozzáadása"
 
-#: ../filtersServices.py:264
-msgid "All services provider"
-msgstr "Az összes csatorna szolgáltató"
+#: filtersServices.py:174
+msgid "Add Channel"
+msgstr "Csatorna hozzáadása lehetőségre"
 
-#: ../plugin.py:1095
-msgid "Automated EPG Importer"
-msgstr "Automatikus Műsorújság importálás"
+#: filtersServices.py:176
+msgid "press OK to save list"
+msgstr "nyomja meg az OK gombot a lista mentéséhez"
 
-#: ../plugin.py:366
-msgid "Automatic import EPG"
-msgstr "Automatikus EPG műsorújság importálás"
+#: filtersServices.py:193
+msgid "Ignore services list(press OK to save)"
+msgstr "A csatornák listájának nélkülözésé (OK ment)"
 
-#: ../plugin.py:367
-msgid "Automatic start time"
-msgstr "Importálás kezdési ideje"
+#: filtersServices.py:222
+msgid "Really delete all list?"
+msgstr "Valóban törli az összes listát?"
 
-#: ../plugin.py:309 ../plugin.py:557 ../plugin.py:637
-msgid "Cancel"
-msgstr "Mégsem"
-
-#: ../plugin.py:371
-msgid "Choice days for start import"
-msgstr "Milyen napokon történjen az Import"
-
-#: ../plugin.py:693
-msgid "Clear"
-msgstr "Törlés"
-
-#: ../plugin.py:382
-msgid "Clearing current EPG before import"
-msgstr "Az aktuális EPG törlése importálás előtt"
-
-#: ../plugin.py:375
-msgid "Consider setting \"Days Profile\""
-msgstr "Legyen beállítva a \"Napi profil\""
-
-#: ../plugin.py:650
-msgid "Days Profile"
-msgstr "Napok profil"
-
-#: ../filtersServices.py:231
-msgid "Delete all"
-msgstr "Összes törlése"
-
-#: ../filtersServices.py:230
+#: filtersServices.py:255
 msgid "Delete selected"
 msgstr "Kiválasztott törlése"
 
-#: ../plugin.py:305
+#: filtersServices.py:256
+msgid "Delete all"
+msgstr "Összes törlése"
+
+#: filtersServices.py:298
+msgid "Channel Selection"
+msgstr "Csatorna kiválasztása"
+
+#: filtersServices.py:306
+msgid "All services provider"
+msgstr "Az összes csatorna szolgáltató"
+
+#: filtersServices.py:325 plugin.py:705
+msgid "Select action"
+msgstr "Művelet kiválasztása"
+
+#: plugin.py:107
+msgid "always"
+msgstr "mindig"
+
+#: plugin.py:108
+msgid "only manual boot"
+msgstr "csak kézi indítással"
+
+#: plugin.py:109
+msgid "only automatic boot"
+msgstr "csak automatikus indítással"
+
+#: plugin.py:110
+msgid "never"
+msgstr "soha"
+
+#: plugin.py:122
+msgid "wake up and import"
+msgstr "felébresztés és importálás"
+
+#: plugin.py:123
+msgid "skip the import"
+msgstr "az importálás kihagyása"
+
+#: plugin.py:149
+msgid "Press OK"
+msgstr "Nyomja meg az OK gombot"
+
+#: plugin.py:158
+msgid "Monday"
+msgstr "Hétfő"
+
+#: plugin.py:159
+msgid "Tuesday"
+msgstr "Kedd"
+
+#: plugin.py:160
+msgid "Wednesday"
+msgstr "Szerda"
+
+#: plugin.py:161
+msgid "Thursday"
+msgstr "Csütörtök"
+
+#: plugin.py:162
+msgid "Friday"
+msgstr "Péntek"
+
+#: plugin.py:163
+msgid "Saturday"
+msgstr "Szombat"
+
+#: plugin.py:164
+msgid "Sunday"
+msgstr "Vasárnap"
+
+#: plugin.py:380
 msgid "EPG Import Configuration"
 msgstr "EPG Import beállítás"
 
-#: ../plugin.py:718
-msgid "EPG Import Log"
-msgstr "EPG Import napló"
+#: plugin.py:383 plugin.py:820 plugin.py:1050
+msgid "Cancel"
+msgstr "Mégsem"
 
-#: ../plugin.py:592
-msgid "EPG Import Sources"
-msgstr "EPG Import források"
+#: plugin.py:384 plugin.py:821 plugin.py:1051 plugin.py:1128
+msgid "Save"
+msgstr "Mentés"
 
-#: ../plugin.py:790
+#: plugin.py:385
+msgid "Manual"
+msgstr "Kézi"
+
+#: plugin.py:386
+msgid "Sources"
+msgstr "Források"
+
+#: plugin.py:424
 #, python-format
-msgid "EPG Import finished, %d events"
-msgstr "EPG Import kész, %d műsor információ"
+msgid "Filtering: %s Please wait!"
+msgstr "Szűrés: %s Kérjük, várjon!"
 
-#: ../plugin.py:1097 ../plugin.py:1098 ../plugin.py:1104 ../plugin.py:1109
-#: ../plugin.py:1114 ../plugin.py:1119 ../plugin.py:1127 ../plugin.py:1137
-msgid "EPG-Importer"
-msgstr "EPGImport"
+#: plugin.py:425
+#, python-format
+msgid "Importing: %s %s events"
+msgstr "Importálás: %s %s esemény"
 
-#: ../plugin.py:483
+#: plugin.py:446 plugin.py:688
+#, python-format
+msgid "Last import: %s events"
+msgstr "Utolsó importálás:  %s műsor információ"
+
+#: plugin.py:462
+msgid "Automatic import EPG"
+msgstr "Automatikus EPG műsorújság importálás"
+
+#: plugin.py:462
+msgid ""
+"When enabled, it allows you to schedule an automatic EPG update at the given "
+"days and time."
+msgstr ""
+"Ha engedélyezve van, lehetővé teszi az automatikus EPG frissítés ütemezését "
+"a megadott napokon és időpontokban."
+
+#: plugin.py:463
+msgid "Path DB EPG"
+msgstr "DB EPG elérési út"
+
+#: plugin.py:463
+msgid "Specify the path folder for save EPG.dat file."
+msgstr "Adja meg az EPG.dat fájl mentési útvonalát."
+
+#: plugin.py:464
+msgid "Source EPG"
+msgstr "Forrás EPG"
+
+#: plugin.py:464
+msgid "Specify the source for EPG."
+msgstr "Adja meg az EPG forrását."
+
+#: plugin.py:465
+msgid "Automatic start time"
+msgstr "Importálás kezdési ideje"
+
+#: plugin.py:465
+msgid "Specify the time for the automatic EPG update."
+msgstr "Adja meg az automatikus EPG-frissítés idejét."
+
+#: plugin.py:466
+msgid "When in deep standby"
+msgstr "Mikor a készülék kikapcsolt állapotban van"
+
+#: plugin.py:466
+msgid ""
+"Choose the action to perform when the box is in deep standby and the "
+"automatic EPG update should normally start."
+msgstr ""
+"Válassza ki a végrehajtandó műveletet, amikor a doboz mély készenléti "
+"állapotban van, és az automatikus EPG-frissítésnek normál esetben el kell "
+"indulnia."
+
+#: plugin.py:467
+msgid "Choice days for start import"
+msgstr "Milyen napokon történjen az Import"
+
+#: plugin.py:467
+msgid "You can select the day(s) when the EPG update must be performed."
+msgstr ""
+"Kiválaszthatja azokat a napokat, amikor az EPG frissítést végre kell hajtani."
+
+#: plugin.py:468
+msgid "Return to deep standby after import"
+msgstr "Importálás után kapcsolja ki a készüléket"
+
+#: plugin.py:468
+msgid ""
+"This will turn back waked up box into deep-standby after automatic EPG "
+"import."
+msgstr ""
+"Ez az automatikus EPG-importálás után mély készenléti állapotba kapcsolja "
+"vissza a felébresztett dobozt."
+
+#: plugin.py:469
+msgid "Standby at startup"
+msgstr "Importálás után Készenléti állapotba kerüljön a készülék"
+
+#: plugin.py:469
+msgid ""
+"The waked up box will be turned into standby after automatic EPG import wake "
+"up."
+msgstr ""
+"A felébresztett doboz készenléti állapotba kerül az automatikus EPG-"
+"importálás után."
+
+#: plugin.py:470
+msgid "Hours after which the import is repeated"
+msgstr "Órák, amelyek után az importálás megismétlődik"
+
+#: plugin.py:470
+msgid ""
+"Number of hours (1-23, or 0 for no repeat) after which the import is "
+"repeated. This value is not saved and will be reset when the GUI restarts."
+msgstr ""
+"Azon órák száma (1-23, vagy 0, ha nincs ismétlés), amely után az importálás "
+"megismétlődik. Ez az érték nem kerül mentésre, és a grafikus felhasználói "
+"felület újraindulásakor visszaáll."
+
+#: plugin.py:471
+msgid "Start import after booting up"
+msgstr "A készülék indítása után Importálás legyen"
+
+#: plugin.py:471
+msgid ""
+"Specify in which case the EPG must be automatically updated after the box "
+"has booted."
+msgstr ""
+"Adja meg, hogy az EPG-t mely esetben kell automatikusan frissíteni, miután a "
+"doboz elindult."
+
+#: plugin.py:472
+msgid "Consider setting \"Days Profile\""
+msgstr "Legyen beállítva a \"Napi profil\""
+
+#: plugin.py:472
+msgid ""
+"When you decide to import the EPG after the box booted mention if the \"days "
+"profile\" must be take into consideration or not."
+msgstr ""
+"Amikor úgy dönt, hogy importálja az EPG-t a doboz elindítása után, említse "
+"meg, hogy a \"napok profilját\" figyelembe kell venni vagy sem."
+
+#: plugin.py:473
+msgid "Skip import on restart GUI"
+msgstr "A kezelőfelület (GUI) újraindításakor az Importálás kihagyása"
+
+#: plugin.py:473
+msgid ""
+"When you restart the GUI you can decide to skip or not the EPG data import."
+msgstr ""
+"Amikor újraindítja a grafikus felhasználói felületet, eldöntheti, hogy "
+"kihagyja-e vagy sem az EPG-adatok importálását."
+
+#: plugin.py:474
+msgid "Start import after standby"
+msgstr "Készenléti állapot után indítsa el az importálást"
+
+#: plugin.py:474
+msgid "Start import after resuming from standby mode."
+msgstr "Indítsa el az importálást a készenléti módból való visszatérés után."
+
+#: plugin.py:475
+msgid "Load EPG only services in bouquets"
+msgstr "EPG betöltése csak a csatornacsomagban lévő csatornáknál"
+
+#: plugin.py:475
+msgid ""
+"To save memory you can decide to only load EPG data for the services that "
+"you have in your bouquet files."
+msgstr ""
+"A memória megtakarítása érdekében dönthet úgy, hogy csak azokhoz a "
+"szolgáltatásokhoz tölti be az EPG-adatokat, amelyek a csokorfájlokban vannak."
+
+#: plugin.py:476
+msgid "Load EPG only for IPTV channels"
+msgstr "EPG betöltése csak IPTV csatornákhoz"
+
+#: plugin.py:476
+msgid ""
+"To save memory you can decide to load EPG data only  for theIPTV channels."
+msgstr ""
+"A memória megtakarítása érdekében dönthet úgy, hogy az EPG adatokat csak az "
+"IPTV csatornákra tölti be."
+
+#: plugin.py:477
+msgid "Show \"EPGimport now\" in extensions"
+msgstr "Az \"EPGimport most\" megjelenítése a bővítményekben"
+
+#: plugin.py:477
+msgid ""
+"Display a shortcut \"EPG import now\" in the extension menu. This menu entry "
+"will immediately start the EPG update process when selected."
+msgstr ""
+"Jelenítse meg az „EPG import most” parancsikont a bővítmény menüjében. Ez a "
+"menüpont azonnal elindítja az EPG frissítési folyamatot, ha kiválasztja."
+
+#: plugin.py:478
+msgid "Show \"EPGImport\" in plugins"
+msgstr "Az „EPGImport” megjelenítése a bővítményekben"
+
+#: plugin.py:478
+msgid "Display a shortcut \"EPG import\" in the plugins browser."
+msgstr ""
+"Jelenítsen meg egy „EPG import” parancsikont a bővítmények böngészőjében."
+
+#: plugin.py:479
+msgid "Show \"EPGimport\" in epg menu"
+msgstr "Az „EPGimport” megjelenítése az epg menüben"
+
+#: plugin.py:479
+msgid ""
+"Display a shortcut \"EPG import\" in your STB epg menu screen. This allows "
+"you to access the configuration."
+msgstr ""
+"Jelenítsen meg egy „EPG import” parancsikont az STB epg menüképernyőjén. Ez "
+"lehetővé teszi a konfiguráció elérését."
+
+#: plugin.py:480
+msgid "Load long descriptions up to X days"
+msgstr "Részletes műsorleírást használó napok száma"
+
+#: plugin.py:480
+msgid ""
+"Define the number of days that you want to get the full EPG data, reducing "
+"this number can help you to save memory usage on your box. But you are also "
+"limited with the EPG provider available data. You will not have 15 days EPG "
+"if it only provide 7 days data."
+msgstr ""
+"Határozza meg a napok számát, ameddig szeretné megkapni a teljes EPG-"
+"adatokat, ennek a számnak a csökkentése segíthet memóriahasználat "
+"megtakarításában. De az EPG szolgáltató által elérhető adatok is "
+"korlátozottak. Nem lesz 15 napos EPG, ha csak 7 napos adatokat közöl."
+
+#: plugin.py:481
+msgid "Run AutoTimer after import"
+msgstr "Az AutoTimer futtatása importálás után"
+
+#: plugin.py:481
+msgid ""
+"You can start automatically the plugin AutoTimer after the EPG data update "
+"to have it refreshing its scheduling after EPG data refresh."
+msgstr ""
+"Az EPG-adatok frissítése után automatikusan elindíthatja az AutoTimer "
+"beépülő modult, hogy az EPG-adatok frissítése után frissítse az ütemezését."
+
+#: plugin.py:482
+msgid "Delete current EPG before import"
+msgstr "Az aktuális EPG törlése az importálás előtt"
+
+#: plugin.py:482
+msgid ""
+"This will clear the current EPG data in memory before updating the EPG data. "
+"This allows you to always have a clean new EPG with the latest EPG data, for "
+"example in case of program changes between refresh, otherwise EPG data are "
+"cumulative."
+msgstr ""
+"Ez törli az aktuális EPG-adatokat a memóriában az EPG-adatok frissítése "
+"előtt. Ez lehetővé teszi, hogy mindig tiszta új EPG legyen a legfrissebb EPG "
+"adatokkal, például a frissítések közötti programváltások esetén, ellenkező "
+"esetben az EPG adatok kumulatívak."
+
+#: plugin.py:483
+msgid "Also apply \"channel id\" filtering on custom.channels.xml"
+msgstr ""
+"Alkalmazza a \"csatornaazonosító\" szűrést is a custom.channels.xml fájlban"
+
+#: plugin.py:483
+msgid ""
+"This is for advanced users that are using the channel id filtering feature. "
+"If enabled, the filter rules defined into /etc/epgimport/channel_id_filter."
+"conf will also be applied on your /etc/epgimport/custom.channels.xml file."
+msgstr ""
+"Ez azoknak a haladó felhasználóknak szól, akik a csatornaazonosító szűrési "
+"funkciót használják. Ha engedélyezve van, az /etc/epgimport/"
+"channel_id_filter.conf fájlban meghatározott szűrőszabályok az /etc/"
+"epgimport/custom.channels.xml fájlra is vonatkoznak."
+
+#: plugin.py:484
+msgid "Execute shell command before import EPG"
+msgstr "Az EPG importálása előtt hajtsa végre a shell parancsot"
+
+#: plugin.py:484
+msgid ""
+"When enabled, then you can run the desired script before starting the "
+"import, after which the import of the EPG will begin."
+msgstr ""
+"Ha engedélyezve van, akkor az importálás megkezdése előtt lefuttathatja a "
+"kívánt szkriptet, amely után megkezdődik az EPG importálása."
+
+#: plugin.py:485
+msgid "Shell command name"
+msgstr "Shell parancs neve"
+
+#: plugin.py:485
+msgid "Enter shell command name."
+msgstr "Írja be a shell parancs nevét."
+
+#: plugin.py:566
+msgid "Settings saved successfully !"
+msgstr "A beállítások sikeresen elmentve!"
+
+#: plugin.py:617
+msgid "Choose Directory:"
+msgstr "Válasszon könyvtárat:"
+
+#: plugin.py:618
+msgid "Choose directory"
+msgstr "Válasszon könyvtárat"
+
+#: plugin.py:648
+msgid "SELECT YOUR CHOICE"
+msgstr "VÁLASZD A VÁLASZTÁST"
+
+#: plugin.py:682
+#, python-format
+msgid "Last import: %s %s, %d events"
+msgstr "Utolsó importálás: %s %s, %d esemény"
+
+#: plugin.py:704
+msgid "Show log"
+msgstr "Naplózás mutatása"
+
+#: plugin.py:704
+msgid "Ignore services list"
+msgstr "Csatornák listájának figyelmen kívül hagyása"
+
+#: plugin.py:715
 msgid ""
 "EPGImport\n"
 "Import of epg data is still in progress. Please wait."
@@ -120,7 +462,11 @@ msgstr ""
 "EPGImport\n"
 "Az epg adatok importálása még folyamatban van. Kérlek várj."
 
-#: ../plugin.py:498
+#: plugin.py:732
+msgid "No active EPG sources found, nothing to do"
+msgstr "Nincs aktív EPG műsorforrás, nincs mit csinálni"
+
+#: plugin.py:743
 msgid ""
 "EPGImport\n"
 "Import of epg data will start.\n"
@@ -132,7 +478,7 @@ msgstr ""
 "Ez néhány percet vesz igénybe.\n"
 "Kezdődhet az importálás?"
 
-#: ../plugin.py:507
+#: plugin.py:763
 msgid ""
 "EPGImport Plugin\n"
 "Failed to start:\n"
@@ -140,150 +486,49 @@ msgstr ""
 "EPGImport bővítmény\n"
 "Nem sikerült elindítani:\n"
 
-#: ../plugin.py:105
-msgid "Friday"
-msgstr "Péntek"
+#: plugin.py:822
+msgid "Import"
+msgstr "Importálás"
 
-#: ../filtersServices.py:168 ../plugin.py:520
-msgid "Ignore services list"
-msgstr "Csatornák listájának figyelmen kívül hagyása"
+#: plugin.py:823
+msgid "Import from Git"
+msgstr "Importálás a Gitből"
 
-#: ../plugin.py:580
-msgid "Import current source"
-msgstr "Jelenlegi forrás importálása"
+#: plugin.py:868
+msgid "EPG Import Sources"
+msgstr "EPG Import források"
 
-#: ../plugin.py:330
-#, python-format
+#: plugin.py:874
 msgid ""
-"Importing: %s\n"
-"%s events"
+"Do you want to update Source now?\n"
+"\n"
+"Wait for the import successful message!"
 msgstr ""
-"Importálás: %s\n"
-"%s műsor információ"
+"Szeretné most frissíteni a forrást?\n"
+"\n"
+"Várja meg a sikeres importálás üzenetét!"
 
-#: ../plugin.py:739
-msgid "Last import: "
-msgstr "Utolsó importálás: "
+#: plugin.py:887
+msgid "Import failed with error: {}"
+msgstr "Az importálás sikertelen a következő hibával: {}"
 
-#: ../plugin.py:478
-#, python-format
-msgid "Last import: %s events"
-msgstr "Utolsó importálás:  %s műsor információ"
+#: plugin.py:899
+msgid "Update Aborted!"
+msgstr "Frissítés megszakítva!"
 
-#: ../plugin.py:473
-#, python-format
-msgid "Last: %s %s, %d events"
-msgstr "Utolsó:  %s %s, %d műsor információ"
+#: plugin.py:930
+msgid "Sources saved successfully!"
+msgstr "A források sikeresen mentve!"
 
-#: ../plugin.py:374
-msgid "Load EPG only for IPTV channels"
-msgstr "EPG betöltése csak IPTV csatornákhoz"
+#: plugin.py:1013
+msgid "EPG database was emptied"
+msgstr "Az EPG adatbázis kiürült"
 
-#: ../plugin.py:373
-msgid "Load EPG only services in bouquets"
-msgstr "EPG betöltése csak a csatornacsomagban lévő csatornáknál"
+#: plugin.py:1069
+msgid "Days Profile"
+msgstr "Napok profil"
 
-#: ../plugin.py:380
-msgid "Load long descriptions up to X days"
-msgstr "Részletes műsorleírást használó napok száma"
-
-#: ../plugin.py:311
-msgid "Manual"
-msgstr "Kézi"
-
-#: ../plugin.py:101
-msgid "Monday"
-msgstr "Hétfő"
-
-#: ../plugin.py:493
-msgid "No active EPG sources found, nothing to do"
-msgstr "Nincs aktív EPG műsorforrás, nincs mit csinálni"
-
-#: ../plugin.py:88
-msgid "Press OK"
-msgstr "Nyomja meg az OK gombot"
-
-#: ../filtersServices.py:197
-msgid "Really delete all list?"
-msgstr "Valóban törli az összes listát?"
-
-#: ../plugin.py:369
-msgid "Return to deep standby after import"
-msgstr "Importálás után kapcsolja ki a készüléket"
-
-#: ../plugin.py:381
-msgid "Run AutoTimer after import"
-msgstr "Az AutoTimer futtatása importálás után"
-
-#: ../plugin.py:106
-msgid "Saturday"
-msgstr "Szombat"
-
-#: ../plugin.py:310 ../plugin.py:558 ../plugin.py:638 ../plugin.py:696
-msgid "Save"
-msgstr "Mentés"
-
-#: ../filtersServices.py:283 ../plugin.py:521
-msgid "Select action"
-msgstr "Művelet kiválasztása"
-
-#: ../filtersServices.py:256
-msgid "Select service to add..."
-msgstr "Válassza ki a hozzáadni kívánt szolgáltatást..."
-
-#: ../plugin.py:377
-msgid "Show \"EPGImport\" in extensions"
-msgstr "Az \"EPGImport\" megjelenítése a bővítményekben"
-
-#: ../plugin.py:378
-msgid "Show \"EPGImport\" in plugins"
-msgstr "Az „EPGImport” megjelenítése a bővítményekben"
-
-#: ../plugin.py:520
-msgid "Show log"
-msgstr "Naplózás mutatása"
-
-#: ../plugin.py:376
-msgid "Skip import on restart GUI"
-msgstr "A kezelőfelület (GUI) újraindításakor az Importálás kihagyása"
-
-#: ../plugin.py:312
-msgid "Sources"
-msgstr "Források"
-
-#: ../plugin.py:370
-msgid "Standby at startup"
-msgstr "Importálás után Készenléti állapotba kerüljön a készülék"
-
-#: ../plugin.py:372
-msgid "Start import after booting up"
-msgstr "A készülék indítása után Importálás legyen"
-
-#: ../plugin.py:107
-msgid "Sunday"
-msgstr "Vasárnap"
-
-#: ../plugin.py:104
-msgid "Thursday"
-msgstr "Csütörtök"
-
-#: ../plugin.py:102
-msgid "Tuesday"
-msgstr "Kedd"
-
-#: ../plugin.py:103
-msgid "Wednesday"
-msgstr "Szerda"
-
-#: ../plugin.py:368
-msgid "When in deep standby"
-msgstr "Mikor a készülék kikapcsolt állapotban van"
-
-#: ../plugin.py:724
-msgid "Write to /tmp/epgimport.log"
-msgstr "Írás a /tmp/epgimport.log fájlba"
-
-#: ../plugin.py:660
+#: plugin.py:1073
 msgid ""
 "You may not use this settings!\n"
 "At least one day a week should be included!"
@@ -291,7 +536,44 @@ msgstr ""
 "Nem használhatja ezeket a beállításokat!\n"
 "Legalább a hét egy napját ki kell választani!"
 
-#: ../plugin.py:790
+#: plugin.py:1125
+msgid "Clear"
+msgstr "Törlés"
+
+#: plugin.py:1162
+msgid "EPG Import Log"
+msgstr "EPG Import napló"
+
+#: plugin.py:1185
+msgid "Write to /tmp/epgimport.log"
+msgstr "Írás a /tmp/epgimport.log fájlba"
+
+#: plugin.py:1210
+msgid "Last import: "
+msgstr "Utolsó importálás: "
+
+#: plugin.py:1210
+msgid " events\n"
+msgstr " műsor információk\n"
+
+#: plugin.py:1211
+msgid ""
+"\n"
+"Import of epg data will start.\n"
+"This may take a few minutes.\n"
+"Is this ok?"
+msgstr ""
+"\n"
+"Az epg adatok importálása megkezdődik.\n"
+"Ez néhány percet vesz igénybe.\n"
+"Kezdődhet az importálás?"
+
+#: plugin.py:1263
+#, python-format
+msgid "EPG Import finished, %d events"
+msgstr "EPG Import kész, %d műsor információ"
+
+#: plugin.py:1263
 msgid ""
 "You must restart Enigma2 to load the EPG data,\n"
 "is this OK?"
@@ -299,30 +581,22 @@ msgstr ""
 "Az EPG adatok betöltéséhez újra kell indítania az Enigma2-t,\n"
 "Rendben van ez így?"
 
-#: ../plugin.py:60
-msgid "always"
-msgstr "mindig"
+#: plugin.py:1415
+msgid "No source file found !"
+msgstr "Nem található forrásfájl!"
 
-#: ../plugin.py:63
-msgid "never"
-msgstr "soha"
+#: plugin.py:1618
+msgid "EPG-Importer"
+msgstr "EPGImport"
 
-#: ../plugin.py:62
-msgid "only automatic boot"
-msgstr "csak automatikus indítással"
+#: plugin.py:1625 plugin.py:1649
+msgid "EPGImport"
+msgstr "EPGImport"
 
-#: ../plugin.py:61
-msgid "only manual boot"
-msgstr "csak kézi indítással"
+#: plugin.py:1645
+msgid "Automated EPG Importer"
+msgstr "Automatikus Műsorújság importálás"
 
-#: ../filtersServices.py:155
-msgid "press OK to save list"
-msgstr "nyomja meg az OK gombot a lista mentéséhez"
-
-#: ../plugin.py:77
-msgid "skip the import"
-msgstr "az importálás kihagyása"
-
-#: ../plugin.py:76
-msgid "wake up and import"
-msgstr "felébresztés és importálás"
+#: plugin.py:1647
+msgid "EPGImport now"
+msgstr "EPGIimportálás most"
