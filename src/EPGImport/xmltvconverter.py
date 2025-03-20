@@ -5,6 +5,7 @@ from __future__ import print_function
 from xml.etree.cElementTree import iterparse
 from calendar import timegm
 from time import strptime, struct_time
+# import six
 from . import log
 from HTMLParser import HTMLParser
 html_parser = HTMLParser()
@@ -38,12 +39,10 @@ def get_time_utc(timestring, fdateparse):
 		timestring: A string in the format "YYYYMMDDhhmmss +HHMM" or similar.
 		fdateparse: A function to parse the date portion of the timestring.
 	Returns:
-		The UTC time as a Unix timestamp or 0 in case of an error.
+		The UTC time as a Unix timestamp or None in case of an error.
 	"""
 	try:
 		values = timestring.split(" ")
-		if len(values) < 2:
-			raise ValueError("Invalid timestring format, missing offset")
 		tm = fdateparse(values[0])
 		time_gm = timegm(tm)
 		# suppose file says +0300 => that means we have to substract 3 hours from localtime to get GMT
@@ -76,11 +75,11 @@ def get_xml_string(elem, name):
 		print("[XMLTVConverter] get_xml_string error:{}".format(e))
 	# Now returning UTF-8 by default, the epgdat/oudeis must be adjusted to make this work.
 	r = html_parser.unescape(r)
-	return r.encode("utf-8")
+	return r.encode('utf-8')
 
 
 def get_xml_language(elem, name):
-	r = ""
+	r = ''
 	lang_map = {
 		"ar": "ara",  # Arabic
 		"az": "aze",  # Azerbaijani
@@ -153,16 +152,12 @@ def get_xml_language(elem, name):
 def enumerateProgrammes(fp):
 	"""Enumerates programme ElementTree nodes from file object 'fp'"""
 	for event, elem in iterparse(fp):
-		try:
-			if elem.tag == "programme":
-				yield elem
-				elem.clear()
-			elif elem.tag == "channel":
-				# Throw away channel elements, save memory
-				elem.clear()
-		except Exception as e:
-			print("[XMLTVConverter] enumerateProgrammes error:", e)
-			break
+		if elem.tag == "programme":
+			yield elem
+			elem.clear()
+		elif elem.tag == "channel":
+			# Throw away channel elements, save memory
+			elem.clear()
 
 
 class XMLTVConverter:

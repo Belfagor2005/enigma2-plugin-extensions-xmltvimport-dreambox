@@ -213,7 +213,7 @@ class EPGChannel:
 					id_channel = elem.get("id")
 					if id_channel:
 						id_channel = id_channel.lower()
-					ref = str(elem.text) if elem.text else None  # Verifica se elem.text è None
+					ref = str(elem.text)
 					if id_channel and ref and filterCallback(ref):
 						# Init list if not present
 						if id_channel not in self.items:
@@ -221,9 +221,6 @@ class EPGChannel:
 						# Avoid duplicates on add
 						if ref not in self.items[id_channel]:
 							self.items[id_channel].append(ref)
-					else:
-						if not id_channel or not ref:
-							log.write("[EPGImport] Missing channel data for channel: id_channel=%s, ref=%s" % (id_channel, ref))
 					elem.clear()
 		except Exception as e:
 			log.write("[EPGImport] Error while parsing channels: %s" % str(e))
@@ -232,10 +229,8 @@ class EPGChannel:
 		customFile = "/etc/epgimport/custom.channels.xml"
 		# Always read custom file since we don't know when it was last updated
 		# and we don't have multiple download from server problem since it is always a local file.
-		"""
-		# if not exists(customFile):
-			# customFile = "/etc/epgimport/rytec.channels.xml"
-		"""
+		if not exists(customFile):
+			customFile = "/etc/epgimport/rytec.channels.xml"
 		if exists(customFile):
 			log.write("[EPGImport] Parsing channels from %s" % customFile)
 			self.parse(filterCallback, customFile)

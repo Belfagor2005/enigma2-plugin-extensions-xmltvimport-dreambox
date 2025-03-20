@@ -79,12 +79,6 @@ filterCounter = 0
 isFilterRunning = 0
 
 
-# if filterCustomChannel:
-	# print("Filtro personalizzato attivato")
-# else:
-	# print("Filtro personalizzato disattivato")
-
-
 SOURCE_LINKS = {
 	"0": "https://github.com/doglover3920/EPGimport-Sources/archive/refs/heads/main.tar.gz",
 	"1": "https://github.com/Belfagor2005/EPGimport-Sources/archive/refs/heads/main.tar.gz"
@@ -477,7 +471,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.cfg_runboot_restart = getConfigListEntry(dx + _("Skip import on restart GUI"), self.EPG.runboot_restart, _("When you restart the GUI you can decide to skip or not the EPG data import."))
 		self.cfg_run_after_standby = getConfigListEntry(_("Start import after standby"), self.EPG.run_after_standby, _("Start import after resuming from standby mode."))
 		self.cfg_import_onlybouquet = getConfigListEntry(_("Load EPG only services in bouquets"), self.EPG.import_onlybouquet, _("To save memory you can decide to only load EPG data for the services that you have in your bouquet files."))
-		self.cfg_import_onlyiptv = getConfigListEntry(_("Load EPG only for IPTV channels"), self.EPG.import_onlyiptv, _("Load EPG only for IPTV channels."))
+		self.cfg_import_onlyiptv = getConfigListEntry(_("Load EPG only for IPTV channels"), self.EPG.import_onlyiptv, _("To save memory you can decide to load EPG data only  for theIPTV channels."))
 		self.cfg_showinextensions = getConfigListEntry(_("Show \"EPGimport now\" in extensions"), self.EPG.showinextensions, _("Display a shortcut \"EPG import now\" in the extension menu. This menu entry will immediately start the EPG update process when selected."))
 		self.cfg_showinplugins = getConfigListEntry(_("Show \"EPGImport\" in plugins"), self.EPG.showinplugins, _("Display a shortcut \"EPG import\" in the plugins browser."))
 		self.cfg_showinmainmenu = getConfigListEntry(_("Show \"EPGimport\" in epg menu"), self.EPG.showinmainmenu, _("Display a shortcut \"EPG import\" in your STB epg menu screen. This allows you to access the configuration."))
@@ -670,7 +664,7 @@ class EPGImportConfig(ConfigListScreen, Screen):
 			src = epgimport.source
 			text = self.importStatusTemplate % (src.description, epgimport.eventCount)
 		self["status"].setText(text)
-		if lastImportResult:
+		if lastImportResult:  # and (lastImportResult != self.lastImportResult):
 			start, count = lastImportResult
 			try:
 				if isinstance(start, str):
@@ -678,14 +672,12 @@ class EPGImportConfig(ConfigListScreen, Screen):
 				elif not isinstance(start, (int, float)):
 					raise ValueError("Start value is not a valid timestamp or string")
 
-				# Modifica qui: rimuovi 'inPast' se non supportato
-				d, t = FuzzyTime(int(start))  # Rimosso inPast=True
+				d, t = FuzzyTime(int(start), inPast=True)
 			except Exception as e:
 				print("[EPGImport] FuzzyTime Error:", e)
 				try:
-					# Prova un altro tentativo senza 'inPast'
 					d, t = FuzzyTime(int(start))
-					print("[EPGImport] Metodo FuzzyTime(int(start))")
+					print("[EPGImport] Metodo FuzzyTime(int(start)")
 				except Exception as e:
 					print("[EPGImport] Fallback with FuzzyTime also failed:", e)
 
@@ -1254,7 +1246,7 @@ def doneImport(reboot=False, epgfile=None):
 	formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime(timestamp))
 	lastImportResult = (formatted_time, epgimport.eventCount)
 	try:
-		if lastImportResult and (lastImportResult != lastImportResult):
+		if lastImportResult:  # and (lastImportResult != lastImportResult):
 			log.write("doneImport lastimport== %s" % lastImportResult)
 			start, count = lastImportResult
 			current_time = asctime(localtime(time()))

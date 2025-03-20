@@ -365,7 +365,9 @@ class EPGImport:
 		if not hasattr(self.epgcache, "load"):
 			print("[EPGImport][readEpgDatFile] Cannot load EPG.DAT files on unpatched enigma. Need CrossEPG patch.")
 			return
+
 		unlink_if_exists(HDD_EPG_DAT)
+
 		try:
 			if filename.endswith(".gz"):
 				print("[EPGImport][readEpgDatFile] Uncompressing", filename)
@@ -400,19 +402,16 @@ class EPGImport:
 			if data is not None:
 				self.eventCount += 1
 				r, d = data
-				if len(d) >= 5:
+				if len(d) >= 5:  # Aggiungi un controllo per la lunghezza della tupla
 					if d[0] > self.longDescUntil:
-						if len(d) > 5:
-							d = d[:4] + ("",) + d[5:]
-						else:
-							d = d[:4] + ("",)
+						# Remove long description (save RAM memory)
+						d = d[:4] + ("",) + d[5:]
+					try:
+						self.storage.importEvents(r, (d,))
+					except Exception as e:
+						print("[EPGImport][doThreadRead] ### importEvents exception:", str(e))
 				else:
-					print("[EPGImport][doThreadRead] ### Invalid data tuple length (expected >= 5, got", len(d), "), skipping event.")
-					continue
-				try:
-					self.storage.importEvents(r, (d,))
-				except Exception as e:
-					print("[EPGImport][doThreadRead] ### importEvents exception:", str(e))
+					print("[EPGImport][doThreadRead] ### Invalid data tuple length, skipping event.")
 		print("[EPGImport][doThreadRead] ### thread is ready ### Events:", self.eventCount)
 		if filename:
 			try:
@@ -460,7 +459,9 @@ class EPGImport:
 			needLoad = self.storage.epgfile
 		else:
 			needLoad = None
+
 		self.storage = None
+
 		if self.eventCount is not None:
 			print("[EPGImport] imported %d events" % self.eventCount)
 			reboot = False
