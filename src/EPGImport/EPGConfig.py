@@ -204,35 +204,26 @@ class EPGChannel:
 
 	def parse(self, filterCallback, downloadedFile):
 		log.write("[EPGImport] Parsing channels from %s" % self.name)
-		self.items = defaultdict(list)
+		if self.items is None:
+			self.items = {}
 		try:
-			stream = self.openStream(downloadedFile)
-			if stream is None:
-				log.write("[EPGImport] Error: Unable to open stream for downloadedFile %s" % downloadedFile)
-				return
-			# here is a problem in the List of supported formats by iterparse: crash on file corrupt
-			# _lzma.LZMAError: Input format not supported by decoder
-			supported_formats = [".xml", ".xml.gz", ".xml.xz"]  # fixed
-			# Make sure the file is in a compatible format
-			if any(downloadedFile.endswith(ext) for ext in supported_formats):
-				context = iterparse(stream)
-				for event, elem in context:
-					if elem.tag == "channel":
-						channel_id = elem.get("id")
-						if channel_id:
-							channel_id = channel_id.lower()
-						ref = str(elem.text or "").strip()
-						if not channel_id or not ref:
-							continue  # Skip empty values
-						if ref and filterCallback(ref):
-							if channel_id in self.items:
-								self.items[channel_id].append(ref)
-							else:
-								self.items[channel_id] = [ref]
-							self.items[channel_id] = list(set(self.items[channel_id]))
-						elem.clear()
+			context = iterparse(self.openStream(downloadedFile))
+			for event, elem in context:
+				if elem.tag == "channel":
+					id_channel = elem.get("id")
+					if id_channel:
+						id_channel = id_channel.lower()
+					ref = str(elem.text)
+					if id_channel and ref and filterCallback(ref):
+						# Init list if not present
+						if id_channel not in self.items:
+							self.items[id_channel] = []
+						# Avoid duplicates on add
+						if ref not in self.items[id_channel]:
+							self.items[id_channel].append(ref)
+					elem.clear()
 		except Exception as e:
-			log.write("[EPGImport] failed to parse %s Error: %s" % (downloadedFile, e))
+			log.write("[EPGImport] Error while parsing channels: %s" % str(e))
 
 	def update(self, filterCallback, downloadedFile=None):
 		customFile = "/etc/epgimport/custom.channels.xml"
