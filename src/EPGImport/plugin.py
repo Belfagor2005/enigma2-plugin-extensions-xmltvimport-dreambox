@@ -378,12 +378,12 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.setup_title = _("EPG Import Configuration")
 		Screen.__init__(self, session)
 		self["status"] = Label()
-		self["statusbar"] = Label(_("Last import: %s events") % config.plugins.extra_epgimport.last_import.value)
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button(_("Save"))
 		self["key_yellow"] = Button(_("Manual"))
 		self["key_blue"] = Button(_("Sources"))
 		self["description"] = Label("")
+		self["statusbar"] = Label(_(""))
 		self.lastImportResult = None
 		self.updateStatus()
 		self["setupActions"] = ActionMap(
@@ -416,11 +416,12 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.prev_onlybouquet = config.plugins.epgimport.import_onlybouquet.value
 		self.initConfig()
 		self.createSetup()
-		self.filterStatusTemplate = _("Filtering: %s Please wait!")
-		self.importStatusTemplate = _("Importing: %s %s events")
 		self.updateTimer = eTimer()
 		self.updateTimer_conn = self.updateTimer.timeout.connect(self.updateStatus)
 		self.updateTimer.start(2000)
+		self.filterStatusTemplate = _("Filtering: %s Please wait!")
+		self.importStatusTemplate = _("Importing: %s %s events")
+
 		self.onLayoutFinish.append(self.__layoutFinished)
 
 	def changedEntry(self):
@@ -475,12 +476,10 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.cfg_showinextensions = getConfigListEntry(_("Show \"EPGimport now\" in extensions"), self.EPG.showinextensions, _("Display a shortcut \"EPG import now\" in the extension menu. This menu entry will immediately start the EPG update process when selected."))
 		self.cfg_showinplugins = getConfigListEntry(_("Show \"EPGImport\" in plugins"), self.EPG.showinplugins, _("Display a shortcut \"EPG import\" in the plugins browser."))
 		self.cfg_showinmainmenu = getConfigListEntry(_("Show \"EPGimport\" in epg menu"), self.EPG.showinmainmenu, _("Display a shortcut \"EPG import\" in your STB epg menu screen. This allows you to access the configuration."))
-
 		# self.cfg_loadepg_only = getConfigListEntry(_("Load EPG"), self.EPG.loadepg_only, _("Select load EPG mode for services."))
 		self.cfg_longDescDays = getConfigListEntry(_("Load long descriptions up to X days"), self.EPG.longDescDays, _("Define the number of days that you want to get the full EPG data, reducing this number can help you to save memory usage on your box. But you are also limited with the EPG provider available data. You will not have 15 days EPG if it only provide 7 days data."))
 		self.cfg_parse_autotimer = getConfigListEntry(_("Run AutoTimer after import"), self.EPG.parse_autotimer, _("You can start automatically the plugin AutoTimer after the EPG data update to have it refreshing its scheduling after EPG data refresh."))
 		self.cfg_clear_oldepg = getConfigListEntry(_("Delete current EPG before import"), config.plugins.epgimport.clear_oldepg, _("This will clear the current EPG data in memory before updating the EPG data. This allows you to always have a clean new EPG with the latest EPG data, for example in case of program changes between refresh, otherwise EPG data are cumulative."))
-
 		self.cfg_filter_custom_channel = getConfigListEntry(_("Also apply \"channel id\" filtering on custom.channels.xml"), self.EPG.filter_custom_channel, _("This is for advanced users that are using the channel id filtering feature. If enabled, the filter rules defined into /etc/epgimport/channel_id_filter.conf will also be applied on your /etc/epgimport/custom.channels.xml file."))
 		self.cfg_execute_shell = getConfigListEntry(_("Execute shell command before import EPG"), self.EPG.execute_shell, _("When enabled, then you can run the desired script before starting the import, after which the import of the EPG will begin."))
 		self.cfg_shell_name = getConfigListEntry(dx + _("Shell command name"), self.EPG.shell_name, _("Enter shell command name."))
@@ -494,15 +493,14 @@ class EPGImportConfig(ConfigListScreen, Screen):
 			if self.EPG.deepstandby.value == "wakeup":
 				self.list.append(self.cfg_shutdown)
 				if not self.EPG.shutdown.value:
-					self.list.append(self.cfg_standby_afterwakeup)
 					self.list.append(self.cfg_repeat_import)
+					self.list.append(self.cfg_standby_afterwakeup)
 			else:
 				self.list.append(self.cfg_repeat_import)
 
 		self.list.append(self.cfg_pathdb)
 		self.list.append(self.cfg_source_import)
 		self.list.append(self.cfg_runboot)
-
 		if self.EPG.runboot.value != "4":
 			self.list.append(self.cfg_runboot_day)
 			if self.EPG.runboot.value == "1" or self.EPG.runboot.value == "2":
@@ -512,15 +510,15 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.list.append(self.cfg_import_onlyiptv)
 		if hasattr(eEPGCache, "flushEPG"):
 			self.list.append(self.cfg_clear_oldepg)
-		self.list.append(self.cfg_longDescDays)
 		self.list.append(self.cfg_filter_custom_channel)
+		self.list.append(self.cfg_longDescDays)
 		self.list.append(self.cfg_execute_shell)
 		if self.EPG.execute_shell.value:
 			self.list.append(self.cfg_shell_name)
 		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/AutoTimer/plugin.pyo")) or fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/AutoTimer/plugin.pyc")):
 			try:
 				self.list.append(self.cfg_parse_autotimer)
-			except ImportError:
+			except:
 				log.write("[XMLTVImport] AutoTimer Plugin not installed")
 		self.list.append(self.cfg_showinplugins)
 		self.list.append(self.cfg_showinmainmenu)
@@ -779,7 +777,6 @@ class EPGImportConfig(ConfigListScreen, Screen):
 		self.session.openWithCallback(self.sourcesDone, EPGImportSources)
 
 	def sourcesDone(self, confirmed, sources, cfg):
-		# Called with True and list of config items on Okay.
 		log.write("sourcesDone(): %s %s" % (confirmed, sources))
 		if cfg is not None:
 			self.doimport(one_source=cfg)
@@ -825,7 +822,6 @@ class EPGImportSources(Screen):
 		self.container = None
 		self.tree = []
 		self.giturl = SOURCE_LINKS.get(config.plugins.epgimport.extra_source.value)
-
 		cfg = EPGConfig.loadUserSettings()
 		filter = cfg["sources"]
 		cat = None
@@ -834,15 +830,18 @@ class EPGImportSources(Screen):
 				sel = (filter is None) or (x.description in filter)
 				entry = (x.description, x.description, sel)
 				if cat is None:
-					# If no category defined, use a default one.
 					cat = ExpandableSelectionList.category("[.]")
-					self.tree.append(cat)
-				cat[0][2].append(entry)
+					if not any(cat[0][0] == c[0][0] for c in self.tree):
+						self.tree.append(cat)
+				if not any(entry[0] == e[0] for e in cat[0][2]):
+					cat[0][2].append(entry)
 				if sel:
 					ExpandableSelectionList.expand(cat, True)
 			else:
 				cat = ExpandableSelectionList.category(x)
-				self.tree.append(cat)
+				if not any(cat[0][0] == c[0][0] for c in self.tree):
+					self.tree.append(cat)
+
 		self["list"] = ExpandableSelectionList.ExpandableSelectionList(self.tree, enableWrapAround=True)
 		if self.tree:
 			self["key_yellow"].show()
@@ -904,9 +903,9 @@ class EPGImportSources(Screen):
 
 	def refresh_tree(self):
 		print("Refreshing tree...")
+		self.tree.clear()
 		cfg = EPGConfig.loadUserSettings()
 		filter = cfg["sources"]
-		self.tree = []
 		cat = None
 		for x in EPGConfig.enumSources(CONFIG_PATH, filter=None, categories=True):
 			if hasattr(x, "description"):
@@ -914,20 +913,27 @@ class EPGImportSources(Screen):
 				entry = (x.description, x.description, sel)
 				if cat is None:
 					cat = ExpandableSelectionList.category("[.]")
-					self.tree.append(cat)
-				cat[0][2].append(entry)
+					if not any(cat[0][0] == c[0][0] for c in self.tree):
+						self.tree.append(cat)
+					else:
+						print("Category " + str(cat[0][0]) + " already in tree")
+				if not any(entry[0] == e[0] for e in cat[0][2]):
+					cat[0][2].append(entry)
+				else:
+					print("Entry " + str(entry[0]) + " already in category")
 				if sel:
 					ExpandableSelectionList.expand(cat, True)
 			else:
 				cat = ExpandableSelectionList.category(x)
-				self.tree.append(cat)
+				if not any(cat[0][0] == c[0][0] for c in self.tree):
+					self.tree.append(cat)
+
 		self["list"].setList(self.tree)
-		# Show or hide the yellow key based on the tree content
 		if self.tree:
 			self["key_yellow"].show()
 		else:
 			self["key_yellow"].hide()
-		# Set the updated tree in the list
+
 		msg = _("Sources saved successfully!")
 		self.session.open(
 			MessageBox,
@@ -1199,7 +1205,7 @@ class EPGImportLog(Screen):
 
 	def clear(self):
 		self.log.logfile.seek(0)
-		self.log.logfile.truncate()
+		self.log.logfile.truncate(0)
 		self.close(False)
 
 

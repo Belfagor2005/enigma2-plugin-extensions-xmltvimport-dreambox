@@ -83,7 +83,9 @@ def main(url):
 
 	extracted_dir = join(TMPSources, "EPGimport-Sources-main")
 
-	for root, _, files in walk(extracted_dir):
+	for root, dirs, files in walk(extracted_dir):
+		if '.github' in dirs:
+			rmtree(join(root, '.github'))
 		for file in files:
 			if file.endswith(".bb"):
 				remove(join(root, file))

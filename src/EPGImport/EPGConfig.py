@@ -334,6 +334,7 @@ def storeUserSettings(filename=SETTINGS_FILE, sources=None):
 	dump(container, open(filename, "wb"), HIGHEST_PROTOCOL)
 
 
+"""
 if __name__ == "__main__":
 	import sys
 	SETTINGS_FILE_PKL = "settings.pkl"
@@ -359,3 +360,4 @@ if __name__ == "__main__":
 		print("Update:", name)
 		c.update()
 		print("# of channels:", len(c.items))
+"""
